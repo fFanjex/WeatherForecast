@@ -1,29 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Forecast</title>
     <link rel="stylesheet" href="/home.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <header class="header">
-    <h1>Weather Forecast</h1>
+    <h1 class="title">
+        <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
+        <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
+    </h1>
 </header>
 <main class="main-content">
     <section class="description-section">
-        <p>Welcome to Weather Forecast! Get up-to-date weather information for any city in the world. Find out current weather conditions, forecasts for a specific period, and weather tips to help you dress appropriately for the weather. Discover fascinating weather facts and much more!</p>
+        <p>Добро пожаловать в <b>Weather Forecast</b>!
+            Получите актуальную информацию о погоде для любого города мира.</p>
+    </section>
+    <section class="button-section">
+        <form action="/save-data" method="get">
+            <button class="action-btn">Сохранить мои данные</button>
+        </form>
+        <form action="/view-weather" method="get">
+            <button class="action-btn">Посмотреть погоду</button>
+        </form>
+        <form action="/interesting-fact" method="get">
+            <button class="action-btn">Интересный факт</button>
+        </form>
     </section>
     <section class="search-section">
-        <input type="text" id="cityInput" placeholder="Enter city name" class="input-field">
-        <button class="search-btn">Search</button>
-    </section>
-    <section class="weather-info" id="weatherInfo">
+        <form action="/search-city" method="get">
+            <input type="text" id="cityInput" name="city" placeholder="Введите название города" class="input-field">
+            <button class="search-btn" type="submit">🔍 Искать</button>
+        </form>
     </section>
 </main>
 <footer class="footer">
-    <p>&copy; 2025 Weather Forecast. All rights reserved.</p>
+    <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
 </footer>
 </body>
 </html>

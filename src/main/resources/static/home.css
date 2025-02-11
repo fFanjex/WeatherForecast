@@ -1,9 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Roboto:wght@400;700&display=swap');
+
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Playfair Display', serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+    background-size: cover;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -14,6 +17,7 @@ body {
     color: white;
     text-align: center;
     padding: 1rem;
+    font-family: 'Roboto', sans-serif;
 }
 
 .main-content {
@@ -26,18 +30,54 @@ body {
 }
 
 .description-section {
-    background-color: white;
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background: wheat;
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     margin-bottom: 2rem;
     max-width: 600px;
     text-align: center;
+    font-size: 1.2rem;
+    font-weight: 500;
 }
 
-.description-text {
-    font-size: 1.2rem;
-    color: #333;
+.button-section {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.action-btn {
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    font-family: 'Playfair Display', serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+
+    border-radius: 20px;
+    clip-path: polygon(
+            20% 0%, 40% 10%, 60% 0%, 80% 10%, 100% 0%, 100% 80%,
+            90% 90%, 80% 100%, 70% 90%, 50% 100%, 30% 90%, 20% 100%, 10% 90%, 0% 80%, 0% 0%
+    );
+}
+
+.action-btn:hover {
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(255, 120, 150, 0.5);
+}
+
+.action-btn:active {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 7px rgba(255, 120, 150, 0.5);
 }
 
 .search-section {
@@ -47,41 +87,55 @@ body {
 }
 
 .input-field {
-    padding: 0.5rem;
-    border: 2px solid #4c6ef5;
-    border-radius: 4px;
+    padding: 0.7rem;
+    border: 2px solid #6a11cb;
+    border-radius: 8px;
     outline: none;
+    font-size: 1rem;
+    font-family: 'Playfair Display', serif;
 }
 
 .search-btn {
-    padding: 0.5rem 1rem;
-    background-color: #4c6ef5;
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
     color: white;
+    font-size: 1rem;
+    font-weight: 700;
     border: none;
-    border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    font-family: 'Playfair Display', serif;
+
+    border-radius: 20px;
+    clip-path: polygon(
+            20% 0%, 40% 10%, 60% 0%, 80% 10%, 100% 0%, 100% 80%,
+            90% 90%, 80% 100%, 70% 90%, 50% 100%, 30% 90%, 20% 100%, 10% 90%, 0% 80%, 0% 0%
+    );
 }
 
 .search-btn:hover {
-    background-color: #3b5bdb;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
     transform: translateY(-5px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 15px rgba(255, 120, 150, 0.5);
 }
 
 .search-btn:active {
     transform: translateY(-2px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 3px 7px rgba(255, 120, 150, 0.5);
 }
 
 .weather-info {
     background-color: white;
     padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     text-align: center;
     width: 100%;
     max-width: 400px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
 }
 
 .footer {
@@ -89,4 +143,36 @@ body {
     color: white;
     text-align: center;
     padding: 1rem;
+    font-family: 'Roboto', sans-serif;
 }
+/* Стили заголовка */
+.title {
+    font-family: 'Playfair Display', cursive;
+    font-size: 3rem;
+    font-weight: 700;
+    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    display: inline-block;
+}
+
+/* Смещение букв */
+.title span {
+    display: inline-block;
+    transform: translateY(calc(var(--offset) * 1px));
+}
+
+/* Разное смещение для букв */
+.title span:nth-child(1) { --offset: 3; }
+.title span:nth-child(2) { --offset: -2; }
+.title span:nth-child(3) { --offset: 4; }
+.title span:nth-child(4) { --offset: -3; }
+.title span:nth-child(5) { --offset: 2; }
+.title span:nth-child(6) { --offset: -1; }
+.title span:nth-child(7) { --offset: 3; }
+.title span:nth-child(8) { --offset: -2; }
+.title span:nth-child(9) { --offset: 4; }
+.title span:nth-child(10) { --offset: -3; }
+.title span:nth-child(11) { --offset: 2; }
+.title span:nth-child(12) { --offset: -1; }
+.title span:nth-child(13) { --offset: 3; }
+.title span:nth-child(14) { --offset: -2; }
+
