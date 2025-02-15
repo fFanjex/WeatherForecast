@@ -1,29 +1,40 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>⛅Weather App by GoldenCat⛅</title>
+    <title>⛅Weather App ⛅</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
     <link rel="stylesheet" type="text/css" href="/weather.css">
 </head>
 <body>
+<header class="header">
+    <div class="top-buttons">
+        <a href="/" class="btn btn-return">
+            ⬅️ Вернуться на главную
+        </a>
+        <a href="#" class="btn btn-fact">
+            🔍 Интересный факт
+        </a>
+    </div>
+</header>
+
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h1 class="card-title text-center">Weather App</h1>
-                    <form action="/weather" method="get">
-                        <div class="form-group">
-                            <input type="text" class="form-control" name="city" placeholder="Enter city name" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block">Узнать погоду ☁️</button>
-                    </form>
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title">Weather App</h1>
+            <form action="/weather" method="get">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="city" placeholder="Введите название города" required>
                 </div>
-            </div>
+                <button type="submit" class="btn btn-primary">Узнать погоду ☁️</button>
+            </form>
         </div>
     </div>
 </div>
+
+<footer class="footer">
+    <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
+</footer>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>

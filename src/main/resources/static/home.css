@@ -145,7 +145,7 @@ body {
     padding: 1rem;
     font-family: 'Roboto', sans-serif;
 }
-/* Стили заголовка */
+
 .title {
     font-family: 'Playfair Display', cursive;
     font-size: 3rem;
@@ -154,13 +154,11 @@ body {
     display: inline-block;
 }
 
-/* Смещение букв */
 .title span {
     display: inline-block;
     transform: translateY(calc(var(--offset) * 1px));
 }
 
-/* Разное смещение для букв */
 .title span:nth-child(1) { --offset: 3; }
 .title span:nth-child(2) { --offset: -2; }
 .title span:nth-child(3) { --offset: 4; }

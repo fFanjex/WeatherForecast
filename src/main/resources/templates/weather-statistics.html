@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>⛅Weather App by GoldenCat⛅</title>
+    <title>⛅Weather App⛅</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/weather.css">
+    <link rel="stylesheet" type="text/css" href="/weather-statistics.css">
 </head>
 <body>
 <div class="container">
@@ -12,13 +12,13 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body text-center">
-                    <h1 class="card-title">Weather in <span th:text="${city}">City</span>, <span th:text="${country}">Country</span></h1>
+                    <h1 class="card-title">Погода в городе: <span th:text="${city}">Город</span>, <span th:text="${country}">Country</span></h1>
                     <span th:classappend="${weatherIcon} + ' weather-icon'"></span>
-                    <p class="card-text"><strong>Description:</strong> <span th:text="${weatherDescription}">Description</span></p>
-                    <p class="card-text"><strong>Temperature:</strong> <span th:text="${temperature}">Temperature</span>°C</p>
-                    <p class="card-text"><strong>Humidity:</strong> <span th:text="${humidity}">Humidity</span>%</p>
-                    <p class="card-text"><strong>Wind Speed:</strong> <span th:text="${windSpeed}">Wind Speed</span> m/s</p>
-                    <a href="/" class="btn btn-secondary btn-block">Back</a>
+                    <p class="card-text"><strong>Описание:</strong> <span th:text="${weatherDescription}">Description</span></p>
+                    <p class="card-text"><strong>Температура:</strong> <span th:text="${temperature}">Temperature</span>°C</p>
+                    <p class="card-text"><strong>Влажность:</strong> <span th:text="${humidity}">Humidity</span>%</p>
+                    <p class="card-text"><strong>Скорость ветра:</strong> <span th:text="${windSpeed}">Wind Speed</span> м/с</p>
+                    <a href="/view-weather" class="btn btn-secondary btn-block">Вернуться назад</a>
                     <div th:if="${error}" class="alert alert-danger mt-3">
                         <p>Error: <span th:text="${error}"></span></p>
                     </div>
