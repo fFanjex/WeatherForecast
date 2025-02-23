@@ -18,6 +18,10 @@
                     <p class="card-text"><strong>Температура:</strong> <span th:text="${temperature}">Temperature</span>°C</p>
                     <p class="card-text"><strong>Влажность:</strong> <span th:text="${humidity}">Humidity</span>%</p>
                     <p class="card-text"><strong>Скорость ветра:</strong> <span th:text="${windSpeed}">Wind Speed</span> м/с</p>
+                    <form action="/council-advice" method="get">
+                        <input type="hidden" name="temperature" th:value="${temperature}">
+                        <button type="submit" class="btn btn-success">👕 Помочь Вам одеться по погоде?</button>
+                    </form>
                     <a href="/view-weather" class="btn btn-secondary btn-block">Вернуться назад</a>
                     <div th:if="${error}" class="alert alert-danger mt-3">
                         <p>Error: <span th:text="${error}"></span></p>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Совет по одежде</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/advice.css">
+</head>
+<body>
+<div class="container text-center mt-5">
+    <h1>🧥 Совет по одежде 🌡</h1>
+    <p class="lead" th:text="${advice}">Здесь будет совет</p>
+    <a href="/view-weather" class="btn btn-primary">⬅ Вернуться назад</a>
+</div>
+</body>
+</html>

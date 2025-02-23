@@ -9,8 +9,6 @@ public class WeatherResponse {
     private Main main;
     private Wind wind;
 
-
-
     public String getName() {
         return name;
     }
