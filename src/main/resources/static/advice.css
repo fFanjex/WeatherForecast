@@ -4,6 +4,10 @@ body {
     color: #333;
     text-align: center;
     padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .container {
@@ -11,8 +15,8 @@ body {
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     padding: 30px;
-    max-width: 500px;
-    margin: auto;
+    max-width: 90vw;
+    width: 500px;
     animation: fadeIn 1s ease-in-out;
 }
 
@@ -22,19 +26,28 @@ h1 {
     margin-bottom: 15px;
 }
 
-.lead {
+.advice-text {
     font-size: 1.4rem;
     color: #555;
     font-style: italic;
+    white-space: pre-wrap; /* Сохранение переносов строк */
+    word-wrap: break-word; /* Перенос слов */
+    text-align: left;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    line-height: 1.6;
 }
 
 .btn-primary {
     background: #007bff;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 24px;
     font-size: 1.2rem;
     border-radius: 25px;
     transition: 0.3s;
+    display: inline-block;
+    margin-top: 15px;
 }
 
 .btn-primary:hover {

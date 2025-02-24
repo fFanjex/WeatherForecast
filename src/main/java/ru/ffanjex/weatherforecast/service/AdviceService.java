@@ -4,8 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.ffanjex.weatherforecast.model.Advice;
-import ru.ffanjex.weatherforecast.repository.AdviceRepository;
 
 
 import java.io.BufferedReader;
@@ -17,34 +15,23 @@ import java.util.List;
 
 @Service
 public class AdviceService {
-    private final AdviceRepository adviceRepository;
-
-    public AdviceService(AdviceRepository adviceRepository) {
-        this.adviceRepository = adviceRepository;
-    }
 
     @Value("${openai.api.key}")
     private String apiKey;
 
     private static final String OPENAI_URL = "https://api.proxyapi.ru/openai/v1/chat/completions";
 
-    public Advice save(Advice advice) {
-        return adviceRepository.save(advice);
-    }
-
-    public List<Advice> getAllAdvices() {
-        return adviceRepository.findAll();
-    }
-
     public String getClothingAdvice(double temperature) {
         try {
-            String prompt = "Какую одежду мне надеть, если температура " + temperature + " градусов по Цельсию?";
+            String prompt = "Дай краткий, но полезный совет по одежде (одно полное предложение, максимум 20 слов), если температура "
+                    + temperature + " градусов по Цельсию.";
 
             JSONObject requestBody = new JSONObject();
             requestBody.put("model", "gpt-3.5-turbo");
             requestBody.put("messages", new JSONArray()
                     .put(new JSONObject().put("role", "user").put("content", prompt)));
-            requestBody.put("max_tokens", 100);
+            requestBody.put("max_tokens", 60);
+            requestBody.put("temperature", 0.5);
 
             URL url = new URL(OPENAI_URL);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
