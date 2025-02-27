@@ -11,7 +11,7 @@ import ru.ffanjex.weatherforecast.model.WeatherResponse;
 @Controller
 public class WeatherController {
 
-    @Value("")
+    @Value("${api.key}")
     private String apiKey;
 
     private String language = "ru";
@@ -23,7 +23,7 @@ public class WeatherController {
 
     @GetMapping("/weather")
     public String getWeather(@RequestParam("city") String city, Model model) {
-        String url = "";
+        String url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&lang=" + language + "&units=metric";
         RestTemplate restTemplate = new RestTemplate();
         WeatherResponse weatherResponse = restTemplate.getForObject(url, WeatherResponse.class);
 

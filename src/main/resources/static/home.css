@@ -5,7 +5,8 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url('/images/WeatherPage.jpg') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     flex-direction: column;
@@ -13,11 +14,64 @@ body {
 }
 
 .header {
-    background-color: #4c6ef5;
+    background-color: rgba(0, 0, 0, 0.6);
     color: white;
     text-align: center;
-    padding: 1rem;
+    padding: 1rem 2rem;
     font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+    font-family: 'Playfair Display', cursive;
+    font-size: 3rem;
+    font-weight: 700;
+    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    display: inline-block;
+}
+
+.title span {
+    display: inline-block;
+    transform: translateY(calc(var(--offset) * 1px));
+}
+
+.title span:nth-child(1) { --offset: 3; }
+.title span:nth-child(2) { --offset: -2; }
+.title span:nth-child(3) { --offset: 4; }
+.title span:nth-child(4) { --offset: -3; }
+.title span:nth-child(5) { --offset: 2; }
+.title span:nth-child(6) { --offset: -1; }
+.title span:nth-child(7) { --offset: 3; }
+.title span:nth-child(8) { --offset: -2; }
+.title span:nth-child(9) { --offset: 4; }
+.title span:nth-child(10) { --offset: -3; }
+.title span:nth-child(11) { --offset: 2; }
+.title span:nth-child(12) { --offset: -1; }
+.title span:nth-child(13) { --offset: 3; }
+.title span:nth-child(14) { --offset: -2; }
+
+.logout-btn {
+    background: #ff4b5c;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+    margin-right: 15px;
+}
+
+.logout-btn:hover {
+    background: #e63946;
+}
+
+#logout {
+    position: absolute;
+    right: 0;
 }
 
 .main-content {
@@ -61,7 +115,6 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
     position: relative;
-
     border-radius: 20px;
     clip-path: polygon(
             20% 0%, 40% 10%, 60% 0%, 80% 10%, 100% 0%, 100% 80%,
@@ -106,7 +159,6 @@ body {
     transition: all 0.3s ease-in-out;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     font-family: 'Playfair Display', serif;
-
     border-radius: 20px;
     clip-path: polygon(
             20% 0%, 40% 10%, 60% 0%, 80% 10%, 100% 0%, 100% 80%,
@@ -139,38 +191,9 @@ body {
 }
 
 .footer {
-    background-color: #4c6ef5;
+    background-color: rgba(0, 0, 0, 0.6);
     color: white;
     text-align: center;
     padding: 1rem;
     font-family: 'Roboto', sans-serif;
 }
-
-.title {
-    font-family: 'Playfair Display', cursive;
-    font-size: 3rem;
-    font-weight: 700;
-    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
-    display: inline-block;
-}
-
-.title span {
-    display: inline-block;
-    transform: translateY(calc(var(--offset) * 1px));
-}
-
-.title span:nth-child(1) { --offset: 3; }
-.title span:nth-child(2) { --offset: -2; }
-.title span:nth-child(3) { --offset: 4; }
-.title span:nth-child(4) { --offset: -3; }
-.title span:nth-child(5) { --offset: 2; }
-.title span:nth-child(6) { --offset: -1; }
-.title span:nth-child(7) { --offset: 3; }
-.title span:nth-child(8) { --offset: -2; }
-.title span:nth-child(9) { --offset: 4; }
-.title span:nth-child(10) { --offset: -3; }
-.title span:nth-child(11) { --offset: 2; }
-.title span:nth-child(12) { --offset: -1; }
-.title span:nth-child(13) { --offset: 3; }
-.title span:nth-child(14) { --offset: -2; }
-
