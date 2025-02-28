@@ -1,31 +1,56 @@
 body {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/WeatherPage.jpg') no-repeat center center fixed;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url('/images/WeatherPage.jpg') no-repeat center center fixed;
     background-size: cover;
     color: white;
     font-family: 'Arial', sans-serif;
 }
+
 .container {
     margin-top: 100px;
 }
+
 .card {
     background-color: rgba(0, 0, 0, 0.6);
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s, box-shadow 0.3s;
 }
+
 .card:hover {
     transform: translateY(-10px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
+
 .weather-icon {
     font-size: 100px;
     color: #ffd700;
     padding-bottom: 10px;
 }
+
 .card-text {
     font-size: 1.2em;
     transition: color 0.3s;
 }
+
 .card-text:hover {
     color: #ffd700;
+}
+
+.btn-custom {
+    display: block;
+    width: 100%;
+    background-color: #6c757d;
+    color: white;
+    font-size: 1.1em;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    border: none;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-custom:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
 }

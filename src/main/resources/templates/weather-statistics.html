@@ -12,17 +12,28 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body text-center">
-                    <h1 class="card-title">Погода в городе: <span th:text="${city}">Город</span>, <span th:text="${country}">Country</span></h1>
+                    <h1 class="card-title">Погода в городе:
+                        <span th:text="${city}">Город</span>,
+                        <span th:text="${country}">Country</span>
+                    </h1>
                     <span th:classappend="${weatherIcon} + ' weather-icon'"></span>
                     <p class="card-text"><strong>Описание:</strong> <span th:text="${weatherDescription}">Description</span></p>
                     <p class="card-text"><strong>Температура:</strong> <span th:text="${temperature}">Temperature</span>°C</p>
                     <p class="card-text"><strong>Влажность:</strong> <span th:text="${humidity}">Humidity</span>%</p>
                     <p class="card-text"><strong>Скорость ветра:</strong> <span th:text="${windSpeed}">Wind Speed</span> м/с</p>
+
                     <form action="/council-advice" method="get">
                         <input type="hidden" name="temperature" th:value="${temperature}">
-                        <button type="submit" class="btn btn-success">👕 Помочь Вам одеться по погоде?</button>
+                        <button type="submit" class="btn btn-custom">👕 Помочь Вам одеться по погоде?</button>
                     </form>
-                    <a href="/view-weather" class="btn btn-secondary btn-block">Вернуться назад</a>
+
+                    <form action="/save-city" method="post">
+                        <input type="hidden" name="city" th:value="${city}">
+                        <button type="submit" class="btn btn-custom mt-2">⭐ Сохранить этот город</button>
+                    </form>
+
+                    <a href="/view-weather" class="btn btn-custom mt-2">Вернуться назад</a>
+
                     <div th:if="${error}" class="alert alert-danger mt-3">
                         <p>Error: <span th:text="${error}"></span></p>
                     </div>

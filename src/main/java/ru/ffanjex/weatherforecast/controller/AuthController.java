@@ -1,6 +1,7 @@
 package ru.ffanjex.weatherforecast.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import ru.ffanjex.weatherforecast.service.UserService;
 @AllArgsConstructor
 public class AuthController {
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/login")
     public String getLoginPage() {
@@ -25,14 +27,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login(@RequestParam String username, @RequestParam String password, Model model) {
-        var user = userService.findByUsername(username);
-
-        if (user.isPresent() && user.get().getPassword().equals(password)) {
-            return "redirect:/";
-        }
-
-        model.addAttribute("error", "Неверное имя пользователя или пароль");
-        return "login";
+        return "Login successful";
     }
 
     @PostMapping("/register")
@@ -43,10 +38,9 @@ public class AuthController {
         try {
             userService.registerUser(username, email, password);
             return "redirect:/login";
-        } catch (IllegalAccessException e) {
+        } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
+            return "register";
         }
-
-        return "register";
     }
 }

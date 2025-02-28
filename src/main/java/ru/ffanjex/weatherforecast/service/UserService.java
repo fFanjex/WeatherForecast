@@ -23,13 +23,13 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void registerUser(String username, String email, String password) throws IllegalAccessException {
+    public void registerUser(String username, String email, String password) {
         if (userRepository.findByUsername(username).isPresent()) {
-            throw new IllegalAccessException("Пользователь с таким именем: " + username + " уже зарегистрирован");
+            throw new IllegalArgumentException("Пользователь с именем " + username + " уже зарегистрирован");
         }
 
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new IllegalAccessException("Пользователь с такой почтой: " + email + " уже зарегистрирован");
+            throw new IllegalArgumentException("Пользователь с email " + email + " уже зарегистрирован");
         }
 
         User user = User.builder()
@@ -40,6 +40,7 @@ public class UserService {
 
         userRepository.save(user);
     }
+
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);

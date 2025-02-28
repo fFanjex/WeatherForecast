@@ -1,15 +1,36 @@
 package ru.ffanjex.weatherforecast.controller;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import ru.ffanjex.weatherforecast.model.City;
+import ru.ffanjex.weatherforecast.model.User;
 import ru.ffanjex.weatherforecast.model.WeatherResponse;
+import ru.ffanjex.weatherforecast.service.CityService;
+import ru.ffanjex.weatherforecast.service.UserService;
+
+import java.util.Optional;
 
 @Controller
 public class WeatherController {
+    @Autowired
+    private final UserService userService;
+    @Autowired
+    private final CityService cityService;
+
+    public WeatherController(UserService userService, CityService cityService) {
+        this.userService = userService;
+        this.cityService = cityService;
+    }
 
     @Value("${api.key}")
     private String apiKey;
@@ -41,5 +62,31 @@ public class WeatherController {
         }
 
         return "weather-statistics";
+    }
+
+    @PostMapping("save-city")
+    public String saveCity(@RequestParam("city") String city, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Optional<User> optionalUser = userService.findByUsername(username);
+
+        if (optionalUser.isEmpty()) {
+            return "redirect:/login";
+        }
+
+        User user = optionalUser.get();
+
+        City savedCity = cityService.findByName(city);
+
+        if (savedCity == null) {
+            savedCity = new City();
+            savedCity.setName(city);
+            savedCity = cityService.save(savedCity);
+        }
+
+        user.setCity(savedCity);
+        userService.save(user);
+
+        return "redirect:/view-weather";
     }
 }
