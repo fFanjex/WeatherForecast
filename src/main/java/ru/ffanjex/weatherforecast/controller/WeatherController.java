@@ -89,4 +89,18 @@ public class WeatherController {
 
         return "redirect:/view-weather";
     }
+
+    @GetMapping("/weather/saved")
+    public String getSavedCityWeather(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Optional<User> optionalUser = userService.findByUsername(username);
+
+        if (optionalUser.isEmpty() || optionalUser.get().getCity() == null) {
+            return "redirect:/home";
+        }
+
+        String cityName = optionalUser.get().getCity().getName();
+        return getWeather(cityName, model);
+    }
 }

@@ -12,9 +12,9 @@
         <a href="/home" class="btn btn-return">
             ⬅️ Вернуться на главную
         </a>
-        <a href="#" class="btn btn-fact">
-            🔍 Интересный факт
-        </a>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
+        </form>
     </div>
 </header>
 
@@ -26,11 +26,16 @@
                 <div class="form-group">
                     <input type="text" class="form-control" name="city" placeholder="Введите название города" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Узнать погоду ☁️</button>
-                <button type="submit" class="btn btn-success">
+                <button type="submit" class="btn btn-primary">☁️ Узнать погоду</button>
+            </form>
+
+            <form action="/weather" method="get">
+                <input type="hidden" name="city" th:value="${savedCity}">
+                <button type="submit" class="btn btn-primary mt-2" th:disabled="${savedCity == ''}">
                     📍 Посмотреть погоду в сохраненном городе
                 </button>
             </form>
+
         </div>
     </div>
 </div>

@@ -10,6 +10,10 @@ import ru.ffanjex.weatherforecast.repository.CityRepository;
 public class CityService {
     private final CityRepository cityRepository;
 
+    public City findCityById(Integer id) {
+        return cityRepository.findById(id).orElse(null);
+    }
+
     public City findByName(String name) {
         return cityRepository.findByName(name);
     }

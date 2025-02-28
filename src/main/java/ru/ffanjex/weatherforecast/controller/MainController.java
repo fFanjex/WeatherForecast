@@ -28,6 +28,10 @@ public class MainController {
 
         User user = optionalUser.get();
         model.addAttribute("userId", user.getId());
+
+        String savedCity = (user.getCity() != null) ? user.getCity().getName() : "";
+        model.addAttribute("savedCity", savedCity);
+
         return "home";
     }
 }
