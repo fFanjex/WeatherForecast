@@ -1,8 +1,5 @@
 package ru.ffanjex.weatherforecast.controller;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,20 +19,18 @@ import java.util.Optional;
 
 @Controller
 public class WeatherController {
-    @Autowired
     private final UserService userService;
-    @Autowired
     private final CityService cityService;
+
+    @Value("${api.key}")
+    private String apiKey;
+
+    private final String language = "ru";
 
     public WeatherController(UserService userService, CityService cityService) {
         this.userService = userService;
         this.cityService = cityService;
     }
-
-    @Value("${api.key}")
-    private String apiKey;
-
-    private String language = "ru";
 
     @GetMapping("/view-weather")
     public String searchWeather(Model model) {
@@ -55,8 +50,7 @@ public class WeatherController {
             model.addAttribute("temperature", weatherResponse.getMain().getTemp());
             model.addAttribute("humidity", weatherResponse.getMain().getHumidity());
             model.addAttribute("windSpeed", weatherResponse.getWind().getSpeed());
-            String weatherIcon = "wi wi-owm-" + weatherResponse.getWeather().get(0).getId();
-            model.addAttribute("weatherIcon", weatherIcon);
+            model.addAttribute("weatherIcon", "wi wi-owm-" + weatherResponse.getWeather().get(0).getId());
         } else {
             model.addAttribute("error", "Город не найден.");
         }
@@ -64,8 +58,8 @@ public class WeatherController {
         return "weather-statistics";
     }
 
-    @PostMapping("save-city")
-    public String saveCity(@RequestParam("city") String city, Model model) {
+    @PostMapping("/save-city")
+    public String saveCity(@RequestParam("city") String city) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         Optional<User> optionalUser = userService.findByUsername(username);
@@ -75,7 +69,6 @@ public class WeatherController {
         }
 
         User user = optionalUser.get();
-
         City savedCity = cityService.findByName(city);
 
         if (savedCity == null) {
@@ -90,8 +83,8 @@ public class WeatherController {
         return "redirect:/view-weather";
     }
 
-    @GetMapping("/weather/saved")
-    public String getSavedCityWeather(Model model) {
+    @GetMapping("/weather/saved/data")
+    public String getSavedCityWeatherData(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         Optional<User> optionalUser = userService.findByUsername(username);
@@ -101,6 +94,25 @@ public class WeatherController {
         }
 
         String cityName = optionalUser.get().getCity().getName();
-        return getWeather(cityName, model);
+        model.addAttribute("savedCity", cityName);
+
+        String url = "http://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + apiKey + "&lang=" + language + "&units=metric";
+        RestTemplate restTemplate = new RestTemplate();
+        WeatherResponse weatherResponse = restTemplate.getForObject(url, WeatherResponse.class);
+
+        if (weatherResponse != null) {
+            model.addAttribute("city", weatherResponse.getName());
+            model.addAttribute("country", weatherResponse.getSys().getCountry());
+            model.addAttribute("weatherDescription", weatherResponse.getWeather().get(0).getDescription());
+            model.addAttribute("temperature", weatherResponse.getMain().getTemp());
+            model.addAttribute("humidity", weatherResponse.getMain().getHumidity());
+            model.addAttribute("windSpeed", weatherResponse.getWind().getSpeed());
+            model.addAttribute("weatherIcon", "wi wi-owm-" + weatherResponse.getWeather().get(0).getId());
+        } else {
+            model.addAttribute("error", "Город не найден.");
+        }
+
+        return "weather-statistics";
     }
+
 }

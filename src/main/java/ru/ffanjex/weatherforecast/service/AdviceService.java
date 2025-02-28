@@ -14,7 +14,6 @@ import java.net.URL;
 
 @Service
 public class AdviceService {
-
     @Value("${openai.api.key}")
     private String apiKey;
 
