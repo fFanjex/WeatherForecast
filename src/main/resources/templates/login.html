@@ -7,22 +7,35 @@
     <link rel="stylesheet" href="/login.css">
 </head>
 <body>
+<header class="header">
+    <h1 class="title">
+        <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
+        <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
+    </h1>
+</header>
 
-<h1>Вход</h1>
+<main class="main-content">
+    <section class="login-section">
+        <h1>Вход</h1>
+        <form action="/login" method="post">
+            <div>
+                <label for="username">Имя пользователя</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div>
+                <label for="password">Пароль</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Войти</button>
 
-<form action="/login" method="post">
-    <div>
-        <label for="username">Имя пользователя</label>
-        <input type="text" id="username" name="username" required>
-    </div>
-    <div>
-        <label for="password">Пароль</label>
-        <input type="password" id="password" name="password" required>
-    </div>
-    <button type="submit">Войти</button>
+            <p class="auth-footer">Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+        </form>
+    </section>
+</main>
 
-    <p class="auth-footer">Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
-</form>
+<footer class="footer">
+    <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
+</footer>
 
 </body>
 </html>
