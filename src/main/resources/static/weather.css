@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Roboto:wght@400;700&display=swap');
+
 body {
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     url('/images/WeatherPage.jpg') no-repeat center center fixed;
@@ -8,7 +10,48 @@ body {
     flex-direction: column;
     min-height: 100vh;
     margin: 0;
+    overflow-x: hidden;
 }
+
+.header {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    text-align: center;
+    padding: 1rem 2rem;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    flex-grow: 1;
+}
+
+.title span {
+    display: inline-block;
+    transform: translateY(calc(var(--offset) * 1px));
+}
+
+.title span:nth-child(1) { --offset: 3; }
+.title span:nth-child(2) { --offset: -2; }
+.title span:nth-child(3) { --offset: 4; }
+.title span:nth-child(4) { --offset: -3; }
+.title span:nth-child(5) { --offset: 2; }
+.title span:nth-child(6) { --offset: -1; }
+.title span:nth-child(7) { --offset: 3; }
+.title span:nth-child(8) { --offset: -2; }
+.title span:nth-child(9) { --offset: 4; }
+.title span:nth-child(10) { --offset: -3; }
+.title span:nth-child(11) { --offset: 2; }
+.title span:nth-child(12) { --offset: -1; }
+.title span:nth-child(13) { --offset: 3; }
+.title span:nth-child(14) { --offset: -2; }
 
 .container {
     flex: 1;
@@ -78,18 +121,17 @@ body {
     text-align: center;
     padding: 1rem;
     font-family: 'Roboto', sans-serif;
-    position: relative;
     width: 100%;
 }
 
-.top-buttons {
+.footer-buttons {
     display: flex;
     justify-content: space-between;
-    padding: 20px;
     position: absolute;
-    width: 100%;
     top: 10px;
-    left: 0;
+    left: 10px;
+    right: 10px;
+    width: 100%;
 }
 
 .btn-return, .btn-fact {
@@ -100,6 +142,9 @@ body {
     font-size: 18px;
     transition: background-color 0.3s ease, transform 0.3s ease;
     text-decoration: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 15px;
 }
 
 .btn-return:hover, .btn-fact:hover {
@@ -114,4 +159,3 @@ body {
 .btn-fact:hover {
     background-color: #3a56c2;
 }
-

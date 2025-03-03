@@ -13,8 +13,11 @@ public class AdviceController {
     private final AdviceService adviceService;
 
     @GetMapping("/council-advice")
-    public String getAdvice(@RequestParam("temperature") double temperature, Model model) {
-        String advice = adviceService.getClothingAdvice(temperature);
+    public String getAdvice(@RequestParam("temperature") double temperature,
+                            @RequestParam("humidity") double humidity,
+                            @RequestParam("windSpeed") double windSpeed,
+                            Model model) {
+        String advice = adviceService.getClothingAdvice(temperature, humidity, windSpeed);
         model.addAttribute("advice", advice);
         return "council-advice";
     }

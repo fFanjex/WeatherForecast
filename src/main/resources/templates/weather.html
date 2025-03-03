@@ -7,15 +7,12 @@
     <link rel="stylesheet" type="text/css" href="/weather.css">
 </head>
 <body>
+
 <header class="header">
-    <div class="top-buttons">
-        <a href="/home" class="btn btn-return">
-            ⬅️ Вернуться на главную
-        </a>
-        <form th:action="@{/logout}" method="post" style="display:inline;">
-            <button type="submit" class="btn btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
-        </form>
-    </div>
+    <h1 class="title">
+        <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
+        <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
+    </h1>
 </header>
 
 <div class="container">
@@ -35,17 +32,23 @@
                     📍 Посмотреть погоду в сохраненном городе
                 </button>
             </form>
-
         </div>
     </div>
 </div>
 
 <footer class="footer">
+    <div class="footer-buttons">
+        <a href="/home" class="btn btn-return">⬅️ Вернуться на главную</a>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
+        </form>
+    </div>
     <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
 </footer>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>

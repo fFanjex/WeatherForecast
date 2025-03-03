@@ -5,8 +5,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import ru.ffanjex.weatherforecast.model.User;
 import org.springframework.stereotype.Service;
+import ru.ffanjex.weatherforecast.model.User;
 import ru.ffanjex.weatherforecast.repository.UserRepository;
 
 import java.util.Collections;

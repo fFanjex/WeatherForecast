@@ -2,8 +2,11 @@ package ru.ffanjex.weatherforecast.service;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.ffanjex.weatherforecast.model.Advice;
+import ru.ffanjex.weatherforecast.repository.AdviceRepository;
 
 
 import java.io.BufferedReader;
@@ -11,25 +14,35 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 @Service
 public class AdviceService {
+
+    @Autowired
+    private final AdviceRepository adviceRepository;
+
+    public AdviceService(AdviceRepository adviceRepository) {
+        this.adviceRepository = adviceRepository;
+    }
+
     @Value("${openai.api.key}")
     private String apiKey;
 
     private static final String OPENAI_URL = "https://api.proxyapi.ru/openai/v1/chat/completions";
 
-    public String getClothingAdvice(double temperature) {
+    public String getClothingAdvice(double temperature, double humidity, double windSpeed) {
         try {
-            String prompt = "Дай краткий, но полезный совет по одежде (одно полное предложение, максимум 20 слов), если температура "
-                    + temperature + " градусов по Цельсию.";
+            String prompt = "Дай подробный и полезный совет по одежде, если температура "
+                    + temperature + "°C, влажность " + humidity + "%, и скорость ветра " + windSpeed + " м/с. "
+                    + "Подробно опиши, что стоит надеть, учитывая все эти условия, и объясни, почему. Уложись в 350 токенов.";
 
             JSONObject requestBody = new JSONObject();
             requestBody.put("model", "gpt-3.5-turbo");
             requestBody.put("messages", new JSONArray()
                     .put(new JSONObject().put("role", "user").put("content", prompt)));
-            requestBody.put("max_tokens", 60);
-            requestBody.put("temperature", 0.5);
+            requestBody.put("max_tokens", 350);
+            requestBody.put("temperature", 0.7);
 
             URL url = new URL(OPENAI_URL);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -63,5 +76,15 @@ public class AdviceService {
             e.printStackTrace();
             return "Ошибка при получении совета: " + e.getMessage();
         }
+    }
+
+
+
+    public Advice save(Advice advice) {
+        return adviceRepository.save(advice);
+    }
+
+    public List<Advice> getAllAdvice() {
+        return adviceRepository.findAll();
     }
 }

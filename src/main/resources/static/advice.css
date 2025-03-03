@@ -28,17 +28,23 @@ h1 {
     margin-bottom: 15px;
 }
 
-.advice-text {
-    font-size: 1.4rem;
-    color: #555;
-    font-style: italic;
-    white-space: pre-wrap; /* Сохранение переносов строк */
-    word-wrap: break-word; /* Перенос слов */
+.advice-box {
     text-align: left;
     padding: 10px;
     background: #f8f9fa;
     border-radius: 10px;
+}
+
+.advice-text {
+    font-size: 1.4rem;
+    color: #555;
+    font-style: italic;
+    white-space: pre-wrap;
+    word-wrap: break-word;
     line-height: 1.6;
+    min-height: 100px; /* Устанавливаем минимальную высоту */
+    max-height: none; /* Без максимальной высоты */
+    overflow: hidden;
 }
 
 .btn-primary {

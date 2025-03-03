@@ -7,40 +7,56 @@
     <link rel="stylesheet" type="text/css" href="/weather-statistics.css">
 </head>
 <body>
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h1 class="card-title">Погода в городе:
-                        <span th:text="${city}">Город</span>,
-                        <span th:text="${country}">Country</span>
-                    </h1>
-                    <span th:classappend="${weatherIcon} + ' weather-icon'"></span>
-                    <p class="card-text"><strong>Описание:</strong> <span th:text="${weatherDescription}">Description</span></p>
-                    <p class="card-text"><strong>Температура:</strong> <span th:text="${temperature}">Temperature</span>°C</p>
-                    <p class="card-text"><strong>Влажность:</strong> <span th:text="${humidity}">Humidity</span>%</p>
-                    <p class="card-text"><strong>Скорость ветра:</strong> <span th:text="${windSpeed}">Wind Speed</span> м/с</p>
+<div class="wrapper">
+    <header class="header">
+        <h1 class="title">
+            <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
+            <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
+        </h1>
+    </header>
 
-                    <form action="/council-advice" method="get">
-                        <input type="hidden" name="temperature" th:value="${temperature}">
-                        <button type="submit" class="btn btn-custom">👕 Помочь Вам одеться по погоде?</button>
-                    </form>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h1 class="card-title">Погода в городе:
+                            <span th:text="${city}">Город</span>,
+                            <span th:text="${country}">Country</span>
+                        </h1>
+                        <span th:classappend="${weatherIcon} + ' weather-icon'"></span>
+                        <p class="card-text"><strong>Описание:</strong> <span th:text="${weatherDescription}">Description</span></p>
+                        <p class="card-text"><strong>Температура:</strong> <span th:text="${temperature}">Temperature</span>°C</p>
+                        <p class="card-text"><strong>Влажность:</strong> <span th:text="${humidity}">Humidity</span>%</p>
+                        <p class="card-text"><strong>Скорость ветра:</strong> <span th:text="${windSpeed}">Wind Speed</span> м/с</p>
 
-                    <form action="/save-city" method="post">
-                        <input type="hidden" name="city" th:value="${city}">
-                        <button type="submit" class="btn btn-custom mt-2">⭐ Сохранить этот город</button>
-                    </form>
+                        <form action="/council-advice" method="get">
+                            <input type="hidden" name="temperature" th:value="${temperature}">
+                            <input type="hidden" name="humidity" th:value="${humidity}">
+                            <input type="hidden" name="windSpeed" th:value="${windSpeed}">
+                            <button type="submit" class="btn btn-custom">👕 Помочь Вам одеться по погоде?</button>
+                        </form>
 
-                    <a href="/view-weather" class="btn btn-custom mt-2">Вернуться назад</a>
 
-                    <div th:if="${error}" class="alert alert-danger mt-3">
-                        <p>Error: <span th:text="${error}"></span></p>
+                        <form action="/save-city" method="post">
+                            <input type="hidden" name="city" th:value="${city}">
+                            <button type="submit" class="btn btn-custom mt-2">⭐ Сохранить этот город</button>
+                        </form>
+
+                        <a href="/view-weather" class="btn btn-custom mt-2">Вернуться назад</a>
+
+                        <div th:if="${error}" class="alert alert-danger mt-3">
+                            <p>Error: <span th:text="${error}"></span></p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
+    </footer>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
