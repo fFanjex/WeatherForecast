@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Roboto:wght@400;700&display=swap');
+
+body {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url('/images/WeatherPage.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Arial', sans-serif;
+    color: white;
+    text-align: center;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+.header {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    text-align: center;
+    padding: 1rem 2rem;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    flex-grow: 1;
+}
+
+.title span {
+    display: inline-block;
+    transform: translateY(calc(var(--offset) * 1px));
+}
+
+.title span:nth-child(1) { --offset: 3; }
+.title span:nth-child(2) { --offset: -2; }
+.title span:nth-child(3) { --offset: 4; }
+.title span:nth-child(4) { --offset: -3; }
+.title span:nth-child(5) { --offset: 2; }
+.title span:nth-child(6) { --offset: -1; }
+.title span:nth-child(7) { --offset: 3; }
+.title span:nth-child(8) { --offset: -2; }
+.title span:nth-child(9) { --offset: 4; }
+.title span:nth-child(10) { --offset: -3; }
+.title span:nth-child(11) { --offset: 2; }
+.title span:nth-child(12) { --offset: -1; }
+.title span:nth-child(13) { --offset: 3; }
+.title span:nth-child(14) { --offset: -2; }
+
+.container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    max-width: 90vw;
+    width: 600px;
+    animation: fadeIn 1s ease-in-out;
+    flex: 1;
+}
+
+.advice-container {
+    text-align: left;
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.advice-item {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    font-size: 1.2rem;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    position: relative;
+    border: 2px solid transparent;
+    overflow: hidden;
+}
+
+.advice-item:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+    border-color: #007bff;
+}
+
+.advice-item::before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border: 1px solid rgba(0, 123, 255, 0.3);
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+.advice-text {
+    font-style: italic;
+    color: #333;
+    margin-bottom: 10px;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.advice-date {
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.footer {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    font-family: 'Roboto', sans-serif;
+    width: 100%;
+}
+
+.footer-buttons {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    width: 100%;
+}
+
+.btn-return, .btn-fact {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 18px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 15px;
+}
+
+.btn-return:hover, .btn-fact:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px);
+}
+
+.btn-fact {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.btn-fact:hover {
+    background-color: #3a56c2;
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои советы по одежде</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/clothing-advice.css">
+</head>
+<body>
+
+<header class="header">
+    <h1 class="title">
+        <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
+        <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
+    </h1>
+</header>
+
+<div class="container text-center mt-5">
+    <h1>📝 Мои советы по одежде</h1>
+    <div class="advice-container">
+        <ul class="advice-list">
+            <li th:each="advice : ${adviceList}" class="advice-item">
+                <span class="advice-date" th:text="${#temporals.format(advice.createdAt, 'dd MMMM yyyy HH:mm')}">
+                    01 января 2025 14:30
+                </span>
+                <p class="advice-text" th:text="${advice.council}">Здесь будет совет</p>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="footer-buttons">
+        <a href="/home" class="btn btn-return">⬅️ Вернуться на главную</a>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
+        </form>
+    </div>
+    <p>&copy; 2025 Clothing Advice. Все права защищены.</p>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,7 @@ import ru.ffanjex.weatherforecast.model.User;
 import ru.ffanjex.weatherforecast.service.AdviceService;
 import ru.ffanjex.weatherforecast.service.UserService;
 
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @AllArgsConstructor
@@ -48,5 +49,30 @@ public class AdviceController {
         userService.addAdviceToUser(user.getId(), advice.getId());
 
         return ResponseEntity.ok("Совет сохранен!");
+    }
+
+    @GetMapping("/clothing-advice")
+    public String viewUserAdvice(Model model) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+
+        User user = userService.findByUsername(username).orElse(null);
+        if (user == null) {
+            model.addAttribute("adviceList", List.of());
+            return "clothing-advice";
+        }
+
+        Set<Advice> adviceSet = user.getAdviceList();
+        List<Advice> adviceList = new ArrayList<>(adviceSet);
+        adviceList.sort(Comparator.comparing(Advice::getCreatedAt).reversed());
+        model.addAttribute("adviceList", adviceList);
+
+        return "clothing-advice";
     }
 }

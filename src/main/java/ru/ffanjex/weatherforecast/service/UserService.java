@@ -9,6 +9,7 @@ import ru.ffanjex.weatherforecast.repository.AdviceRepository;
 import ru.ffanjex.weatherforecast.repository.UserRepository;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -49,5 +50,11 @@ public class UserService {
             user.getAdviceList().add(advice);
             userRepository.save(user);
         }
+    }
+
+    public Set<Advice> getUserAdvice(Integer userId) {
+        return userRepository.findById(userId)
+                .map(User::getAdviceList)
+                .orElse(Set.of());
     }
 }
