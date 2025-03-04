@@ -3,7 +3,9 @@ package ru.ffanjex.weatherforecast.service;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.ffanjex.weatherforecast.model.Advice;
 import ru.ffanjex.weatherforecast.model.User;
+import ru.ffanjex.weatherforecast.repository.AdviceRepository;
 import ru.ffanjex.weatherforecast.repository.UserRepository;
 
 import java.util.Optional;
@@ -12,6 +14,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final AdviceRepository adviceRepository;
     private final PasswordEncoder passwordEncoder;
 
     public Optional<User> findByUsername(String username) {
@@ -34,5 +37,17 @@ public class UserService {
                 .build();
 
         userRepository.save(user);
+    }
+
+    public void addAdviceToUser(Integer userId, Integer adviceId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        Optional<Advice> adviceOpt = adviceRepository.findById(adviceId);
+
+        if (userOpt.isPresent() && adviceOpt.isPresent()) {
+            User user = userOpt.get();
+            Advice advice = adviceOpt.get();
+            user.getAdviceList().add(advice);
+            userRepository.save(user);
+        }
     }
 }

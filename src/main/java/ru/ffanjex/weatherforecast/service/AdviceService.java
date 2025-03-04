@@ -78,13 +78,9 @@ public class AdviceService {
         }
     }
 
-
-
-    public Advice save(Advice advice) {
+    public Advice saveAdvice(String adviceText) {
+        Advice advice = new Advice();
+        advice.setCouncil(adviceText);
         return adviceRepository.save(advice);
-    }
-
-    public List<Advice> getAllAdvice() {
-        return adviceRepository.findAll();
     }
 }

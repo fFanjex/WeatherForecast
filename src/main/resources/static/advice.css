@@ -42,8 +42,8 @@ h1 {
     white-space: pre-wrap;
     word-wrap: break-word;
     line-height: 1.6;
-    min-height: 100px; /* Устанавливаем минимальную высоту */
-    max-height: none; /* Без максимальной высоты */
+    min-height: 100px;
+    max-height: none;
     overflow: hidden;
 }
 
@@ -54,8 +54,10 @@ h1 {
     font-size: 1.2rem;
     border-radius: 25px;
     transition: 0.3s;
-    display: inline-block;
-    margin-top: 15px;
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 10px auto 0;
 }
 
 .btn-primary:hover {

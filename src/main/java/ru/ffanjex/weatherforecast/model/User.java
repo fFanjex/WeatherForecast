@@ -2,9 +2,11 @@ package ru.ffanjex.weatherforecast.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,6 +18,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "users_id_gen", sequenceName = "users_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -33,9 +36,11 @@ public class User {
     @JoinColumn(name = "city_id")
     private City city;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "advice_id")
-    private Advice advice;
-
+    @ManyToMany
+    @JoinTable(
+            name = "user_advice",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "advice_id")
+    )
+    private Set<Advice> adviceList = new HashSet<>();
 }
