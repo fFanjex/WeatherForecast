@@ -1,6 +1,8 @@
 package ru.ffanjex.weatherforecast.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.ffanjex.weatherforecast.model.Fact;
 import ru.ffanjex.weatherforecast.repository.FactRepository;
@@ -16,7 +18,7 @@ public class FactService {
         return factRepository.save(fact);
     }
 
-    public List<Fact> getAllFacts() {
-        return factRepository.findAll();
+    public Page<Fact> findAllFacts(PageRequest pageRequest) {
+        return factRepository.findAllByOrderByIdDesc(pageRequest);
     }
 }

@@ -7,13 +7,32 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<div class="container text-center mt-5">
-    <h1>🥼 Совет по одежде 🌡</h1>
-    <div class="advice-box">
-        <p class="lead advice-text" th:text="${advice}">Здесь будет совет</p>
+
+<div class="wrapper">
+    <header class="header">
+        <h1 class="title">
+            <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
+            <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
+        </h1>
+    </header>
+
+    <div class="container text-center mt-5">
+        <h1>🥼 Совет по одежде 🌡</h1>
+        <div class="advice-box">
+            <p class="lead advice-text" th:text="${advice}">Здесь будет совет</p>
+        </div>
+        <a href="/view-weather" class="btn btn-custom mt-3">⬅ Вернуться назад</a>
+        <button id="save-advice-btn" class="btn btn-custom mt-3">💾 Сохранить совет</button>
     </div>
-    <a href="/view-weather" class="btn btn-primary mt-3">⬅ Вернуться назад</a>
-    <button id="save-advice-btn" class="btn btn-primary mt-3">💾 Сохранить совет</button>
+
+    <footer class="footer">
+        <div class="footer-buttons">
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
+            </form>
+        </div>
+        <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
+    </footer>
 </div>
 
 <script>

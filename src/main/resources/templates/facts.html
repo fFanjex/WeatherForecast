@@ -3,25 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Интересные факты</title>
+    <title>📌 Интересные факты</title>
     <link rel="stylesheet" href="/facts.css">
 </head>
 <body>
 
 <header class="header">
-    <h1 class="title">📌 Интересные факты</h1>
+    <h1 class="title">
+        <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
+        <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
+    </h1>
 </header>
 
 <div class="container">
     <ul class="fact-list">
-        <li th:each="fact : ${facts}" class="fact-item">
+        <li th:each="fact : ${factsPage.content}" class="fact-item">
             <p th:text="${fact.text}">Текст факта</p>
         </li>
     </ul>
+
+    <div class="pagination">
+        <a th:if="${currentPage > 0}" th:href="@{/interesting-fact(page=${currentPage - 1})}" class="btn-pagination">⬅️ Назад</a>
+        <span>Страница <span th:text="${currentPage + 1}"></span> из <span th:text="${totalPages}"></span></span>
+        <a th:if="${currentPage + 1 < totalPages}" th:href="@{/interesting-fact(page=${currentPage + 1})}" class="btn-pagination">Вперед ➡️</a>
+    </div>
 </div>
 
 <footer class="footer">
-    <a href="/home" class="btn btn-return">⬅️ Вернуться на главную</a>
+    <div class="footer-buttons">
+        <a href="/home" class="btn btn-return">⬅️ Вернуться на главную</a>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
+        </form>
+    </div>
+    <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
 </footer>
 
 </body>

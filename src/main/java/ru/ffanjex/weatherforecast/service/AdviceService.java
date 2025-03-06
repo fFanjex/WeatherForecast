@@ -32,8 +32,9 @@ public class AdviceService {
     private static final String OPENAI_URL = "https://api.proxyapi.ru/openai/v1/chat/completions";
 
     public String getClothingAdvice(double temperature, double humidity, double windSpeed) {
+
         try {
-            String prompt = "Дай подробный и полезный совет по одежде, если температура "
+            String prompt = "Дай подробный, уникальный и полезный совет по одежде, если температура "
                     + temperature + "°C, влажность " + humidity + "%, и скорость ветра " + windSpeed + " м/с. "
                     + "Подробно опиши, что стоит надеть, учитывая все эти условия, и объясни, почему. Уложись в 250 символов.";
 
