@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интересные факты</title>
+    <link rel="stylesheet" href="/facts.css">
+</head>
+<body>
+
+<header class="header">
+    <h1 class="title">📌 Интересные факты</h1>
+</header>
+
+<div class="container">
+    <ul class="fact-list">
+        <li th:each="fact : ${facts}" class="fact-item">
+            <p th:text="${fact.text}">Текст факта</p>
+        </li>
+    </ul>
+</div>
+
+<footer class="footer">
+    <a href="/home" class="btn btn-return">⬅️ Вернуться на главную</a>
+</footer>
+
+</body>
+</html>

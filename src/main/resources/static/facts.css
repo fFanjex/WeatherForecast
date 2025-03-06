@@ -1,0 +1,42 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f5f5;
+    text-align: center;
+}
+
+.header {
+    background-color: #007bff;
+    padding: 20px;
+    color: white;
+    font-size: 24px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.fact-list {
+    list-style: none;
+    padding: 0;
+}
+
+.fact-item {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    font-size: 18px;
+}
+
+.btn-return {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border-radius: 5px;
+}

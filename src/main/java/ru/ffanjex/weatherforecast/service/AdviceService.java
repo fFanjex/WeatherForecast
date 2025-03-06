@@ -35,13 +35,13 @@ public class AdviceService {
         try {
             String prompt = "Дай подробный и полезный совет по одежде, если температура "
                     + temperature + "°C, влажность " + humidity + "%, и скорость ветра " + windSpeed + " м/с. "
-                    + "Подробно опиши, что стоит надеть, учитывая все эти условия, и объясни, почему. Уложись в 350 токенов.";
+                    + "Подробно опиши, что стоит надеть, учитывая все эти условия, и объясни, почему. Уложись в 250 символов.";
 
             JSONObject requestBody = new JSONObject();
             requestBody.put("model", "gpt-3.5-turbo");
             requestBody.put("messages", new JSONArray()
                     .put(new JSONObject().put("role", "user").put("content", prompt)));
-            requestBody.put("max_tokens", 350);
+            requestBody.put("max_tokens", 250);
             requestBody.put("temperature", 0.7);
 
             URL url = new URL(OPENAI_URL);
