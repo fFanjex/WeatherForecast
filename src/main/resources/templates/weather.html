@@ -19,16 +19,19 @@
     <div class="card">
         <div class="card-body">
             <h1 class="card-title">Weather App</h1>
-            <form action="/weather" method="get">
+            <form method="get">
                 <div class="form-group">
                     <input type="text" class="form-control" name="city" placeholder="Введите название города" required>
                 </div>
-                <button type="submit" class="btn btn-primary">☁️ Узнать погоду</button>
+                <div class="btn-group" role="group">
+                    <button formaction="/weather" type="submit" class="btn btn-primary">☁️ Узнать погоду</button>
+                    <button formaction="/weather/forecast" type="submit" class="btn btn-info">📅 Прогноз на 5 дней</button>
+                </div>
             </form>
 
             <form action="/weather/saved/data" method="get">
                 <input type="hidden" name="city" th:value="${savedCity}">
-                <button type="submit" class="btn btn-primary mt-2" th:disabled="${savedCity == ''}">
+                <button type="submit" class="btn btn-primary mt-3" th:disabled="${savedCity == ''}">
                     📍 Посмотреть погоду в сохраненном городе
                 </button>
             </form>

@@ -1,0 +1,159 @@
+body {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/WeatherPage.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+    font-family: 'Arial', sans-serif;
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex-grow: 1;
+    margin-top: 100px;
+    padding: 20px;
+}
+
+.header {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 1rem 2rem;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.title {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.btn-return, .btn-fact {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 18px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-return:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px);
+}
+
+.btn-fact:hover {
+    background-color: #3a56c2;
+}
+
+.card {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+    padding: 20px;
+    text-align: center;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.weather-icon {
+    font-size: 100px;
+    color: #ffd700;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 1.2em;
+    transition: color 0.3s;
+}
+
+.card-text:hover {
+    color: #ffd700;
+}
+
+.btn-custom {
+    display: block;
+    width: 100%;
+    background-color: #6c757d;
+    color: white;
+    font-size: 1.1em;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    border: none;
+    transition: background-color 0.3s, transform 0.2s;
+    cursor: pointer;
+}
+
+.btn-custom:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+}
+
+.footer {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    font-family: 'Roboto', sans-serif;
+    width: 100%;
+}
+
+.footer-buttons {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    width: 100%;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.table th, .table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.table th {
+    background-color: #333;
+    color: white;
+}
+
+.pagination {
+    justify-content: center;
+}
+
+.page-item.disabled .page-link {
+    background-color: #6c757d;
+    color: white;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.page-link {
+    color: white;
+    background-color: #343a40;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.page-link:hover {
+    background-color: #495057;
+}

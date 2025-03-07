@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Прогноз на 5 дней</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
+    <link rel="stylesheet" type="text/css" href="/weather-statistics.css">
+</head>
+<body>
+<div class="wrapper">
+    <header class="header d-flex justify-content-between align-items-center">
+        <a href="/home" class="btn btn-return">⬅️ Вернуться на главную</a>
+        <h1 class="title text-center">
+            <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
+            <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
+        </h1>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
+        </form>
+    </header>
+    <div class="container">
+        <h1 th:text="'Прогноз погоды для ' + ${city} + ' на ' + ${currentDate}" class="text-white"></h1>
+        <div th:if="${forecastList}">
+            <table class="table table-dark table-striped">
+                <thead>
+                <tr>
+                    <th>Дата и время</th>
+                    <th>Температура (°C)</th>
+                    <th>Описание</th>
+                    <th>Скорость ветра (м/с)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="forecast : ${forecastList}">
+                    <td th:text="${forecast.dtTxt}"></td>
+                    <td th:text="${forecast.main.temp}"></td>
+                    <td th:text="${forecast.weather[0].description}"></td>
+                    <td th:text="${forecast.wind.speed}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                        <a class="page-link btn-black" th:href="@{/weather/forecast(city=${city}, page=${currentPage - 1})}">⬅️ Назад</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                        <a class="page-link btn-black" th:href="@{/weather/forecast(city=${city}, page=${currentPage + 1})}">Вперед ➡️</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div th:if="${error}" class="alert alert-danger">
+            <p th:text="${error}"></p>
+        </div>
+    </div>
+    <footer class="footer">
+        <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
+    </footer>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

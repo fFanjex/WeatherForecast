@@ -5,8 +5,8 @@ import java.util.List;
 public class WeatherResponse {
     private String name;
     private Sys sys;
-    private List<Weather> weather;
     private Main main;
+    private List<Weather> weather;
     private Wind wind;
 
     public String getName() {
@@ -25,20 +25,20 @@ public class WeatherResponse {
         this.sys = sys;
     }
 
-    public List<Weather> getWeather() {
-        return weather;
-    }
-
-    public void setWeather(List<Weather> weather) {
-        this.weather = weather;
-    }
-
     public Main getMain() {
         return main;
     }
 
     public void setMain(Main main) {
         this.main = main;
+    }
+
+    public List<Weather> getWeather() {
+        return weather;
+    }
+
+    public void setWeather(List<Weather> weather) {
+        this.weather = weather;
     }
 
     public Wind getWind() {
@@ -52,7 +52,6 @@ public class WeatherResponse {
     public static class Sys {
         private String country;
 
-
         public String getCountry() {
             return country;
         }
@@ -62,32 +61,9 @@ public class WeatherResponse {
         }
     }
 
-    public static class Weather {
-        private int id;
-        private String description;
-
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-    }
-
     public static class Main {
         private double temp;
         private int humidity;
-
 
         public double getTemp() {
             return temp;
@@ -106,9 +82,29 @@ public class WeatherResponse {
         }
     }
 
+    public static class Weather {
+        private int id;
+        private String description;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+    }
+
     public static class Wind {
         private double speed;
-
 
         public double getSpeed() {
             return speed;
