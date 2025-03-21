@@ -1,66 +1,71 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>⛅Weather App⛅</title>
+    <title>⛅ Weather App ⛅</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
     <link rel="stylesheet" type="text/css" href="/weather-statistics.css">
 </head>
 <body>
-<div class="wrapper">
-    <header class="header">
-        <h1 class="title">
-            <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
-            <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
-        </h1>
-    </header>
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h1 class="card-title">Погода в городе:
-                            <span th:text="${city}">Город</span>,
-                            <span th:text="${country}">Country</span>
-                        </h1>
-                        <span th:classappend="${weatherIcon} + ' weather-icon'"></span>
-                        <p class="card-text"><strong>Описание:</strong> <span th:text="${weatherDescription}">Description</span></p>
-                        <p class="card-text"><strong>Температура:</strong> <span th:text="${temperature}">Temperature</span>°C</p>
-                        <p class="card-text"><strong>Влажность:</strong> <span th:text="${humidity}">Humidity</span>%</p>
-                        <p class="card-text"><strong>Скорость ветра:</strong> <span th:text="${windSpeed}">Wind Speed</span> м/с</p>
+<header class="header">
+    <h1 class="title">
+        <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
+        <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
+    </h1>
+</header>
 
-                        <form action="/council-advice" method="get">
-                            <input type="hidden" name="temperature" th:value="${temperature}">
-                            <input type="hidden" name="humidity" th:value="${humidity}">
-                            <input type="hidden" name="windSpeed" th:value="${windSpeed}">
-                            <button type="submit" class="btn btn-custom">👕 Помочь Вам одеться по погоде?</button>
-                        </form>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h1 class="card-title">Погода в городе:
+                        <span th:text="${city}">Город</span>,
+                        <span th:text="${country}">Country</span>
+                    </h1>
+                    <span th:classappend="${weatherIcon} + ' weather-icon'"></span>
+                    <p class="card-text"><strong>Описание:</strong> <span th:text="${weatherDescription}">Description</span></p>
+                    <p class="card-text"><strong>Температура:</strong> <span th:text="${temperature}">Temperature</span>°C</p>
+                    <p class="card-text"><strong>Влажность:</strong> <span th:text="${humidity}">Humidity</span>%</p>
+                    <p class="card-text"><strong>Скорость ветра:</strong> <span th:text="${windSpeed}">Wind Speed</span> м/с</p>
 
+                    <form action="/council-advice" method="get">
+                        <input type="hidden" name="temperature" th:value="${temperature}">
+                        <input type="hidden" name="humidity" th:value="${humidity}">
+                        <input type="hidden" name="windSpeed" th:value="${windSpeed}">
+                        <button type="submit" class="btn btn-custom">👕 Помочь Вам одеться по погоде?</button>
+                    </form>
 
-                        <form action="/save-city" method="post">
-                            <input type="hidden" name="city" th:value="${city}">
-                            <button type="submit" class="btn btn-custom mt-2">⭐ Сохранить этот город</button>
-                        </form>
+                    <form action="/save-city" method="post">
+                        <input type="hidden" name="city" th:value="${city}">
+                        <button type="submit" class="btn btn-custom mt-2">⭐ Сохранить этот город</button>
+                    </form>
 
-                        <a href="/view-weather" class="btn btn-custom mt-2">Вернуться назад</a>
+                    <a href="/view-weather" class="btn btn-custom mt-2">Вернуться назад</a>
 
-                        <div th:if="${error}" class="alert alert-danger mt-3">
-                            <p>Error: <span th:text="${error}"></span></p>
-                        </div>
+                    <div th:if="${error}" class="alert alert-danger mt-3">
+                        <p>Error: <span th:text="${error}"></span></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <footer class="footer">
-        <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
-    </footer>
 </div>
+
+<footer class="footer">
+    <div class="footer-buttons">
+        <a href="/home" class="btn btn-return">⬅️ Вернуться на главную</a>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
+        </form>
+    </div>
+    <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
+</footer>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>
