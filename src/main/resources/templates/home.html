@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Weather Forecast</title>
-    <link rel="stylesheet" href="/home.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/home.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
 </head>
 <body>
 <header class="header">
@@ -17,11 +17,14 @@
         <button class="logout-btn">Выход</button>
     </form>
 </header>
+
 <main class="main-content">
     <section class="description-section">
-        <p>Добро пожаловать в <b>Weather Forecast</b>!
-            Получите актуальную информацию о погоде для любого города мира.</p>
+        <p>Добро пожаловать, пользователь <b id="user-id">...</b>!</p>
+        <p>Сохранённый город: <b id="city-name">Загрузка...</b></p>
+        <p>Получите актуальную информацию о погоде для любого города мира.</p>
     </section>
+
     <section class="button-section">
         <form action="/view-weather" method="get">
             <button class="action-btn">Посмотреть погоду в своем городе</button>
@@ -34,8 +37,27 @@
         </form>
     </section>
 </main>
+
 <footer class="footer">
     <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
 </footer>
+
+<script>
+    fetch('/api/home')
+        .then(response => {
+            if (!response.ok) {
+                window.location.href = '/login';
+                return;
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('user-id').textContent = data.userId;
+            document.getElementById('city-name').textContent = data.savedCity || 'не выбрано';
+        })
+        .catch(() => {
+            document.getElementById('city-name').textContent = 'Ошибка загрузки';
+        });
+</script>
 </body>
 </html>

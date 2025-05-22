@@ -21,14 +21,22 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register", "/login", "/register.css", "/login.css", "/images/**").permitAll()
+                        .requestMatchers(
+                                "/register",
+                                "/login",
+                                "/register.css",
+                                "/login.css",
+                                "/images/**",
+                                "/api/auth/**"
+                        ).permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/home", true)
                         .permitAll())
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/login").permitAll());
+                        .logoutSuccessUrl("/login")
+                        .permitAll());
 
         return http.build();
     }
@@ -40,10 +48,10 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder =
+        AuthenticationManagerBuilder authBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(userDetailsService)
+        authBuilder.userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder());
-        return authenticationManagerBuilder.build();
+        return authBuilder.build();
     }
 }

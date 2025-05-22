@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.ffanjex.weatherforecast.model.Fact;
 import ru.ffanjex.weatherforecast.service.FactService;
 
-import java.util.List;
 
 @Controller
 @AllArgsConstructor
 public class FactController {
+
     @Autowired
     private final FactService factService;
 

@@ -22,7 +22,7 @@ public class UserCustomService implements UserDetailsService {
         Optional<User> optionalUser = userRepository.findByUsername(username);
 
         if (optionalUser.isEmpty()) {
-            throw new IllegalAccessError();
+            throw new UsernameNotFoundException("User not found with username: " + username);
         }
 
         User user = optionalUser.get();
