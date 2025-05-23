@@ -40,13 +40,17 @@
         $("#save-advice-btn").click(function() {
             let adviceText = $(".advice-text").text();
 
-            $.post("/save-advice", { adviceText: adviceText })
-                .done(function(response) {
+            $.ajax({
+                url: "/api/advice/save",
+                type: "POST",
+                data: { adviceText: adviceText },
+                success: function(response) {
                     alert("✅ " + response);
-                })
-                .fail(function(error) {
-                    alert("❌ Ошибка: " + error.responseText);
-                });
+                },
+                error: function(xhr) {
+                    alert("❌ Ошибка: " + xhr.responseText);
+                }
+            });
         });
     });
 </script>

@@ -1,81 +1,66 @@
 package ru.ffanjex.weatherforecast.service;
 
+import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.ffanjex.weatherforecast.model.Advice;
+import ru.ffanjex.weatherforecast.model.User;
 import ru.ffanjex.weatherforecast.repository.AdviceRepository;
+import ru.ffanjex.weatherforecast.repository.UserRepository;
 
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
+import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class AdviceService {
 
-    @Autowired
     private final AdviceRepository adviceRepository;
-
-    public AdviceService(AdviceRepository adviceRepository) {
-        this.adviceRepository = adviceRepository;
-    }
+    private final UserRepository userRepository;
 
     @Value("${openai.api.key}")
     private String apiKey;
 
     private static final String OPENAI_URL = "https://api.proxyapi.ru/openai/v1/chat/completions";
 
-    public String getClothingAdvice(double temperature, double humidity, double windSpeed) {
-
+    public String generateAdvice(double temperature, double humidity, double windSpeed) {
         try {
-            String prompt = "Дай подробный, уникальный и полезный совет по одежде, если температура "
-                    + temperature + "°C, влажность " + humidity + "%, и скорость ветра " + windSpeed + " м/с. "
-                    + "Подробно опиши, что стоит надеть, учитывая все эти условия, и объясни, почему. Уложись в 250 символов.";
+            String prompt = String.format("Дай совет по одежде при %.1f°C, %.1f%% влажности и ветре %.1f м/с. Уложись в 250 символов.",
+                    temperature, humidity, windSpeed);
 
-            JSONObject requestBody = new JSONObject();
-            requestBody.put("model", "gpt-3.5-turbo");
-            requestBody.put("messages", new JSONArray()
-                    .put(new JSONObject().put("role", "user").put("content", prompt)));
-            requestBody.put("max_tokens", 250);
-            requestBody.put("temperature", 0.7);
+            JSONObject body = new JSONObject()
+                    .put("model", "gpt-3.5-turbo")
+                    .put("messages", new JSONArray()
+                            .put(new JSONObject().put("role", "user").put("content", prompt)))
+                    .put("max_tokens", 250)
+                    .put("temperature", 0.7);
 
-            URL url = new URL(OPENAI_URL);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty("Authorization", "Bearer " + apiKey);
-            con.setDoOutput(true);
+            HttpURLConnection connection = (HttpURLConnection) new URL(OPENAI_URL).openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Authorization", "Bearer " + apiKey);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
 
-            try (OutputStream os = con.getOutputStream()) {
-                os.write(requestBody.toString().getBytes());
+            try (OutputStream os = connection.getOutputStream()) {
+                os.write(body.toString().getBytes());
                 os.flush();
             }
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) response.append(line);
 
-            JSONObject jsonResponse = new JSONObject(response.toString());
-            JSONArray choices = jsonResponse.getJSONArray("choices");
-
-            if (choices.length() > 0) {
+                JSONArray choices = new JSONObject(response.toString()).getJSONArray("choices");
                 return choices.getJSONObject(0).getJSONObject("message").getString("content");
-            } else {
-                return "Не удалось получить совет, попробуйте позже.";
             }
+
         } catch (Exception e) {
-            e.printStackTrace();
-            return "Ошибка при получении совета: " + e.getMessage();
+            return "Ошибка: " + e.getMessage();
         }
     }
 
@@ -83,5 +68,22 @@ public class AdviceService {
         Advice advice = new Advice();
         advice.setCouncil(adviceText);
         return adviceRepository.save(advice);
+    }
+
+    public boolean attachAdviceToUser(String username, Advice advice) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        if (userOpt.isEmpty()) return false;
+
+        User user = userOpt.get();
+        user.getAdviceList().add(advice);
+        userRepository.save(user);
+        return true;
+    }
+
+    public List<Advice> getUserAdvices(String username) {
+        return userRepository.findByUsername(username)
+                .map(User::getAdviceList)
+                .map(ArrayList::new)
+                .orElseGet(ArrayList::new);
     }
 }
