@@ -1,39 +1,47 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>📌 Интересные факты</title>
-    <link rel="stylesheet" href="/facts.css">
+    <link rel="stylesheet" href="/facts.css" />
 </head>
 <body>
 
-<header class="header">
+<header class="header text-center mt-3">
     <h1 class="title">
         <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
         <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
     </h1>
 </header>
 
-<div class="container">
-    <ul class="fact-list">
-        <li th:each="fact : ${factsPage.content}" class="fact-item">
+<div class="container mt-5">
+    <ul class="fact-list list-unstyled">
+        <li class="fact-item mb-3" th:each="fact : ${factsPage.content}">
             <p th:text="${fact.text}">Текст факта</p>
         </li>
     </ul>
 
-    <div class="pagination">
-        <a th:if="${currentPage > 0}" th:href="@{/interesting-fact(page=${currentPage - 1})}" class="btn-pagination">⬅️ Назад</a>
-        <span>Страница <span th:text="${currentPage + 1}"></span> из <span th:text="${totalPages}"></span></span>
-        <a th:if="${currentPage + 1 < totalPages}" th:href="@{/interesting-fact(page=${currentPage + 1})}" class="btn-pagination">Вперед ➡️</a>
+    <div class="pagination d-flex justify-content-center align-items-center mt-4 gap-3">
+        <a th:if="${currentPage > 0}" th:href="@{/interesting-fact(page=${currentPage - 1})}" class="btn-pagination btn btn-outline-primary">
+            ⬅️ Назад
+        </a>
+
+        <span>
+            Страница <strong th:text="${currentPage + 1}">1</strong> из <strong th:text="${totalPages}">1</strong>
+        </span>
+
+        <a th:if="${currentPage + 1 < totalPages}" th:href="@{/interesting-fact(page=${currentPage + 1})}" class="btn-pagination btn btn-outline-primary">
+            Вперед ➡️
+        </a>
     </div>
 </div>
 
-<footer class="footer">
-    <div class="footer-buttons">
-        <a href="/home" class="btn btn-return">⬅️ Вернуться на главную</a>
+<footer class="footer text-center mt-5">
+    <div class="footer-buttons mb-3">
+        <a href="/home" class="btn btn-return btn-secondary">⬅️ Вернуться на главную</a>
         <form th:action="@{/logout}" method="post" style="display:inline;">
-            <button type="submit" class="btn btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
+            <button type="submit" class="btn btn-fact btn-danger">╰┈➤🚪 Выйти из аккаунта</button>
         </form>
     </div>
     <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
