@@ -33,6 +33,7 @@ services:
     ports:
       - "5435:5432"
     volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     networks:

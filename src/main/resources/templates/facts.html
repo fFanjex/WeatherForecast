@@ -47,5 +47,35 @@
     <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
 </footer>
 
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const factItems = document.querySelectorAll(".fact-item");
+
+        factItems.forEach((item, index) => {
+            item.style.opacity = 0;
+            item.style.transform = "translateY(20px)";
+            setTimeout(() => {
+                item.style.transition = "all 0.6s ease";
+                item.style.opacity = 1;
+                item.style.transform = "translateY(0)";
+            }, index * 120);
+        });
+
+        const paginationLinks = document.querySelectorAll(".btn-pagination");
+
+        paginationLinks.forEach(link => {
+            link.addEventListener("click", (e) => {
+                e.preventDefault();
+                document.body.style.transition = "opacity 0.4s ease";
+                document.body.style.opacity = "0";
+
+                setTimeout(() => {
+                    window.location.href = link.href;
+                }, 400);
+            });
+        });
+    });
+</script>
+
 </body>
 </html>
