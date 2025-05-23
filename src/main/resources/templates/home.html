@@ -19,10 +19,13 @@
 </header>
 
 <main class="main-content">
-    <section class="description-section">
-        <p>Добро пожаловать, пользователь <b id="user-id">...</b>!</p>
-        <p>Сохранённый город: <b id="city-name">Загрузка...</b></p>
-        <p>Получите актуальную информацию о погоде для любого города мира.</p>
+    <section class="description-section" id="description-card">
+        <h2 id="welcome-title">Добро пожаловать!</h2>
+        <div class="user-info">
+            <p><span class="label">Пользователь:</span> <span class="value" id="user-id">...</span></p>
+            <p><span class="label">Сохранённый город:</span> <span class="value" id="city-name">Загрузка...</span></p>
+        </div>
+        <p class="intro-text">🌍 Получите актуальную информацию о погоде в любом уголке планеты!</p>
     </section>
 
     <section class="button-section">
@@ -52,7 +55,7 @@
             return response.json();
         })
         .then(data => {
-            document.getElementById('user-id').textContent = data.userId;
+            document.getElementById('user-id').textContent = data.username || 'Неизвестно';
             document.getElementById('city-name').textContent = data.savedCity || 'не выбрано';
         })
         .catch(() => {

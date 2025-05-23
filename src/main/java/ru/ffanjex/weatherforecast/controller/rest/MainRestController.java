@@ -33,7 +33,7 @@ public class MainRestController {
         User user = optionalUser.get();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("userId", user.getId());
+        response.put("username", user.getUsername());
         response.put("savedCity", user.getCity() != null ? user.getCity().getName() : "");
 
         return ResponseEntity.ok(response);
