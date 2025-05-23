@@ -9,19 +9,39 @@
 <body>
 
 <header class="header">
-    <h1 class="title">
+    <a href="/home" class="btn-return">⬅️ Вернуться на главную</a>
+
+    <h1 class="title" id="animated-title">
         <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
         <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
     </h1>
+
+    <form th:action="@{/logout}" method="post" class="logout-form">
+        <button type="submit" class="btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
+    </form>
 </header>
 
 <div class="container">
     <div class="card">
         <div class="card-body">
             <h1 class="card-title">Weather App</h1>
-            <form method="get">
-                <div class="form-group">
-                    <input type="text" class="form-control" name="city" placeholder="Введите название города" required>
+            <form method="get" id="weather-form">
+                <div class="form-group input-wrapper" style="position:relative;">
+                    <input type="text" class="form-control" name="city" id="city-input" placeholder="Введите название города" required autocomplete="off">
+                    <button type="button" id="clear-btn" title="Очистить поле" style="
+                        position: absolute;
+                        right: 12px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        background: transparent;
+                        border: none;
+                        font-size: 1.2rem;
+                        cursor: pointer;
+                        color: #555;
+                        display: none;">&times;</button>
+                    <div id="input-hint" style="margin-top:5px; font-size:0.9rem; color:#ddd; font-style:italic; display:none;">
+                        Введите название города на русском или английском
+                    </div>
                 </div>
                 <div class="btn-group" role="group">
                     <button formaction="/weather" type="submit" class="btn btn-primary">☁️ Узнать погоду</button>
@@ -29,8 +49,8 @@
                 </div>
             </form>
 
-            <form action="/weather/saved/data" method="get">
-                <button type="submit" class="btn btn-primary mt-3">
+            <form action="/weather/saved/data" method="get" style="margin-top:1rem;">
+                <button type="submit" class="btn btn-primary">
                     📍 Погода в сохранённом городе
                 </button>
             </form>
@@ -39,18 +59,46 @@
 </div>
 
 <footer class="footer">
-    <div class="footer-buttons">
-        <a href="/home" class="btn btn-return">⬅️ Вернуться на главную</a>
-        <form th:action="@{/logout}" method="post" style="display:inline;">
-            <button type="submit" class="btn btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
-        </form>
-    </div>
     <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
 </footer>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const titleSpans = document.querySelectorAll('#animated-title span');
+        titleSpans.forEach((span, idx) => {
+            span.style.opacity = '0';
+            span.style.transition = 'opacity 0.4s ease';
+            setTimeout(() => {
+                span.style.opacity = '1';
+            }, idx * 100);
+        });
+
+        const input = document.getElementById('city-input');
+        const clearBtn = document.getElementById('clear-btn');
+        const hint = document.getElementById('input-hint');
+
+        input.addEventListener('input', () => {
+            if(input.value.length > 0){
+                clearBtn.style.display = 'block';
+                hint.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+                hint.style.display = 'none';
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            input.value = '';
+            clearBtn.style.display = 'none';
+            hint.style.display = 'none';
+            input.focus();
+        });
+    });
+</script>
 
 </body>
 </html>

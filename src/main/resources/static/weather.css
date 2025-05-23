@@ -16,13 +16,13 @@ body {
 .header {
     background-color: rgba(0, 0, 0, 0.6);
     color: white;
-    text-align: center;
     padding: 1rem 2rem;
     font-family: 'Roboto', sans-serif;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: space-between;
     width: 100%;
+    box-sizing: border-box;
 }
 
 .title {
@@ -31,6 +31,7 @@ body {
     text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
     text-align: center;
     flex-grow: 1;
+    margin: 0 20px;
 }
 
 .title span {
@@ -100,19 +101,56 @@ body {
     outline: none;
 }
 
+
 .btn-primary {
     width: 100%;
-    background-color: #007bff;
+    background: linear-gradient(135deg, #4a90e2, #357abd);
     border: none;
-    border-radius: 5px;
-    padding: 10px;
+    border-radius: 12px;
+    padding: 12px 0;
     font-size: 18px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    font-weight: 600;
+    color: white;
+    box-shadow: 0 6px 12px rgba(70, 130, 255, 0.4);
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    user-select: none;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, #357abd, #2a5d9f);
+    box-shadow: 0 8px 20px rgba(53, 122, 189, 0.6);
+    transform: translateY(-3px);
+}
+
+.btn-primary:active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 10px rgba(53, 122, 189, 0.5);
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #50c9c3, #36b9b1);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    box-shadow: 0 6px 12px rgba(80, 201, 195, 0.4);
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.btn-info:hover {
+    background: linear-gradient(135deg, #36b9b1, #2d8d88);
+    box-shadow: 0 8px 20px rgba(54, 185, 177, 0.6);
+    transform: translateY(-3px);
+}
+
+.btn-info:active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 10px rgba(54, 185, 177, 0.5);
 }
 
 .footer {
@@ -122,40 +160,41 @@ body {
     padding: 1rem;
     font-family: 'Roboto', sans-serif;
     width: 100%;
+    position: relative;
 }
 
-.footer-buttons {
-    display: flex;
-    justify-content: space-between;
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    right: 10px;
-    width: 100%;
-}
 
 .btn-return, .btn-fact {
-    background-color: rgba(0, 0, 0, 0.6);
+    background: linear-gradient(135deg, #6a6a6a, #4a4a4a);
     color: white;
     padding: 10px 20px;
     border-radius: 50px;
-    font-size: 18px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(70, 70, 70, 0.4);
     border: none;
     cursor: pointer;
-    margin-right: 15px;
+    user-select: none;
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 170px;
+    white-space: nowrap;
 }
 
 .btn-return:hover, .btn-fact:hover {
-    background-color: #0056b3;
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    box-shadow: 0 6px 14px rgba(70, 144, 226, 0.6);
     transform: translateY(-3px);
 }
 
-.btn-fact {
-    background-color: rgba(0, 0, 0, 0.6);
+.btn-return:active, .btn-fact:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(70, 144, 226, 0.5);
 }
 
-.btn-fact:hover {
-    background-color: #3a56c2;
+.logout-form {
+    margin: 0;
 }

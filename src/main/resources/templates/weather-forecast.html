@@ -1,18 +1,31 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ru">
 <head>
-    <title>📅 Прогноз на 5 дней</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
-    <link rel="stylesheet" type="text/css" href="/weather-statistics.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Weather Forecast</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css" />
+    <link rel="stylesheet" href="/weather-forecast.css" />
 </head>
 <body>
 
 <header class="header">
-    <h1 class="title">
+    <div class="left-controls">
+        <a href="/home" class="btn-return">⬅️ Вернуться на главную</a>
+    </div>
+
+    <h1 class="title" id="animated-title">
         <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
         <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
     </h1>
+
+    <div class="right-controls">
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
+        </form>
+    </div>
 </header>
 
 <div class="container">
@@ -56,14 +69,19 @@
 </div>
 
 <footer class="footer">
-    <div class="footer-buttons">
-        <a href="/home" class="btn btn-return">⬅️ Вернуться на главную</a>
-        <form th:action="@{/logout}" method="post">
-            <button type="submit" class="btn btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
-        </form>
-    </div>
     <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
 </footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const spans = document.querySelectorAll('#animated-title span');
+        spans.forEach((span, idx) => {
+            setTimeout(() => {
+                span.classList.add('visible');
+            }, idx * 100);
+        });
+    });
+</script>
 
 </body>
 </html>
