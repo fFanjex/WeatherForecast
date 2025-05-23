@@ -5,14 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Weather Forecast</title>
     <link rel="stylesheet" href="/home.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
 </head>
 <body>
 <header class="header">
-    <h1 class="title">
-        <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
-        <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
-    </h1>
+    <h1 class="title">WeatherForecast</h1>
     <form id="logout" action="/logout" method="post">
         <button class="logout-btn">Выход</button>
     </form>
@@ -30,13 +27,13 @@
 
     <section class="button-section">
         <form action="/view-weather" method="get">
-            <button class="action-btn">Посмотреть погоду в своем городе</button>
+            <button class="action-btn btn-weather">🌤 Посмотреть погоду</button>
         </form>
         <form action="/interesting-fact" method="get">
-            <button class="action-btn">Интересный факт</button>
+            <button class="action-btn btn-fact">💡 Интересный факт</button>
         </form>
         <form action="/clothing-advice" method="get">
-            <button class="action-btn">Посмотреть мои советы по одежде</button>
+            <button class="action-btn btn-clothing">🧥 Советы по одежде</button>
         </form>
     </section>
 </main>

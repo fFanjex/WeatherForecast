@@ -17,10 +17,10 @@
 <main class="main-content">
     <section class="register-section">
         <h1>Регистрация</h1>
-        <form id="register-form">
+        <form id="register-form" novalidate>
             <div>
                 <label for="username">Имя пользователя</label>
-                <input type="text" id="username" name="username" required />
+                <input type="text" id="username" name="username" required minlength="3" />
             </div>
             <div>
                 <label for="email">Почта</label>
@@ -28,7 +28,7 @@
             </div>
             <div>
                 <label for="password">Пароль</label>
-                <input type="password" id="password" name="password" required />
+                <input type="password" id="password" name="password" required minlength="6" />
             </div>
             <button type="submit">Зарегистрироваться</button>
             <p class="auth-footer">
@@ -44,14 +44,47 @@
 </footer>
 
 <script>
-    document.getElementById('register-form').addEventListener('submit', function (e) {
+    const form = document.getElementById('register-form');
+    const msg = document.getElementById('register-msg');
+
+    function validateInput(input) {
+        if (!input.checkValidity()) {
+            input.classList.add('error');
+            return false;
+        }
+        input.classList.remove('error');
+        return true;
+    }
+
+    form.addEventListener('input', (e) => {
+        validateInput(e.target);
+        msg.textContent = '';
+    });
+
+    form.addEventListener('submit', (e) => {
         e.preventDefault();
 
+        const inputs = Array.from(form.querySelectorAll('input'));
+        let valid = true;
+
+        inputs.forEach(input => {
+            if (!validateInput(input)) valid = false;
+        });
+
+        if (!valid) {
+            msg.style.color = 'crimson';
+            msg.textContent = 'Пожалуйста, заполните все поля правильно.';
+            return;
+        }
+
         const body = {
-            username: document.getElementById('username').value,
-            email: document.getElementById('email').value,
-            password: document.getElementById('password').value
+            username: form.username.value.trim(),
+            email: form.email.value.trim(),
+            password: form.password.value.trim()
         };
+
+        msg.style.color = 'black';
+        msg.textContent = 'Отправка...';
 
         fetch('/api/auth/register', {
             method: 'POST',
@@ -60,14 +93,16 @@
         })
             .then(res => {
                 if (res.ok) {
-                    document.getElementById('register-msg').innerText = 'Успешно! Перенаправление...';
+                    msg.style.color = 'green';
+                    msg.textContent = 'Успешно! Перенаправление...';
                     setTimeout(() => window.location.href = '/login', 1500);
                 } else {
-                    return res.text().then(msg => { throw new Error(msg); });
+                    return res.text().then(text => { throw new Error(text); });
                 }
             })
             .catch(err => {
-                document.getElementById('register-msg').innerText = 'Ошибка: ' + err.message;
+                msg.style.color = 'crimson';
+                msg.textContent = 'Ошибка: ' + err.message;
             });
     });
 </script>

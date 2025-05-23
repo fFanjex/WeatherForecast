@@ -17,26 +17,60 @@
 <main class="main-content">
     <section class="login-section">
         <h1>Вход</h1>
-        <form action="/login" method="post">
+        <form id="login-form" action="/login" method="post" novalidate>
             <div>
                 <label for="username">Имя пользователя</label>
-                <input type="text" id="username" name="username" required />
+                <input type="text" id="username" name="username" required minlength="3" />
             </div>
             <div>
                 <label for="password">Пароль</label>
-                <input type="password" id="password" name="password" required />
+                <input type="password" id="password" name="password" required minlength="6" />
             </div>
             <button type="submit">Войти</button>
             <p class="auth-footer">
                 Нет аккаунта? <a href="/register">Зарегистрироваться</a>
             </p>
-            <p style="color: red;" id="login-error" th:if="${param.error}">Неверное имя пользователя или пароль</p>
         </form>
+        <p id="login-error"></p>
     </section>
 </main>
 
 <footer class="footer">
     <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
 </footer>
+
+<script>
+    const form = document.getElementById('login-form');
+    const errorMsg = document.getElementById('login-error');
+
+    function validateInput(input) {
+        if (!input.checkValidity()) {
+            input.classList.add('error');
+            return false;
+        }
+        input.classList.remove('error');
+        return true;
+    }
+
+    form.addEventListener('input', (e) => {
+        validateInput(e.target);
+        errorMsg.textContent = '';
+    });
+
+    form.addEventListener('submit', (e) => {
+        const inputs = Array.from(form.querySelectorAll('input'));
+        let valid = true;
+
+        inputs.forEach(input => {
+            if (!validateInput(input)) valid = false;
+        });
+
+        if (!valid) {
+            e.preventDefault();
+            errorMsg.style.color = 'crimson';
+            errorMsg.textContent = 'Пожалуйста, заполните все поля правильно.';
+        }
+    });
+</script>
 </body>
 </html>
