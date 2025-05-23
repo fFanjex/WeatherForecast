@@ -24,7 +24,7 @@
                         <span th:text="${city}">Город</span>,
                         <span th:text="${country}">Country</span>
                     </h1>
-                    <span th:classappend="${weatherIcon} + ' weather-icon'"></span>
+                    <span th:class="'wi ' + ${weatherIcon} + ' weather-icon'"></span>
                     <p class="card-text"><strong>Описание:</strong> <span th:text="${weatherDescription}">Description</span></p>
                     <p class="card-text"><strong>Температура:</strong> <span th:text="${temperature}">Temperature</span>°C</p>
                     <p class="card-text"><strong>Влажность:</strong> <span th:text="${humidity}">Humidity</span>%</p>

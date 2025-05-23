@@ -30,9 +30,8 @@
             </form>
 
             <form action="/weather/saved/data" method="get">
-                <input type="hidden" name="city" th:value="${savedCity}">
-                <button type="submit" class="btn btn-primary mt-3" th:disabled="${savedCity == ''}">
-                    📍 Посмотреть погоду в сохраненном городе
+                <button type="submit" class="btn btn-primary mt-3">
+                    📍 Погода в сохранённом городе
                 </button>
             </form>
         </div>
