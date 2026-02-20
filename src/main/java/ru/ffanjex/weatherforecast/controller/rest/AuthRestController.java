@@ -15,7 +15,10 @@ public class AuthRestController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
-            userService.registerUser(request.getUsername(), request.getEmail(), request.getPassword());
+            userService.registerUser(request.getUsername(),
+                    request.getEmail(),
+                    request.getPassword(),
+                    request.getSex());
             return ResponseEntity.ok("User registered successfully");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

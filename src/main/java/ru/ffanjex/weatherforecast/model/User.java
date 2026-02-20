@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import ru.ffanjex.weatherforecast.dto.enums.Sex;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,6 +31,10 @@ public class User {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "sex")
+    @Enumerated(EnumType.STRING)
+    private Sex sex;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)

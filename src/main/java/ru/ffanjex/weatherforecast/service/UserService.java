@@ -3,6 +3,7 @@ package ru.ffanjex.weatherforecast.service;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.ffanjex.weatherforecast.dto.enums.Sex;
 import ru.ffanjex.weatherforecast.model.Advice;
 import ru.ffanjex.weatherforecast.model.User;
 import ru.ffanjex.weatherforecast.repository.AdviceRepository;
@@ -26,7 +27,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void registerUser(String username, String email, String password) {
+    public void registerUser(String username, String email, String password, Sex sex) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new IllegalArgumentException("Пользователь уже зарегистрирован");
         }
@@ -35,6 +36,7 @@ public class UserService {
                 .username(username)
                 .email(email)
                 .password(passwordEncoder.encode(password))
+                .sex(sex)
                 .build();
 
         userRepository.save(user);
