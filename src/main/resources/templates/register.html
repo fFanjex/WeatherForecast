@@ -3,51 +3,138 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Регистрация</title>
+    <title>Регистрация • WeatherForecast</title>
     <link rel="stylesheet" href="/register.css" />
 </head>
 <body>
+<div class="bg"></div>
+<div class="noise"></div>
+
 <header class="header">
-    <h1 class="title">
-        <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
-        <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
-    </h1>
+    <div class="brand">
+        <div class="logo" aria-hidden="true">WF</div>
+        <div class="brand-text">
+            <div class="brand-title">WeatherForecast</div>
+            <div class="brand-subtitle">Умная погода. Умные советы.</div>
+        </div>
+    </div>
 </header>
 
 <main class="main-content">
-    <section class="register-section">
-        <h1>Регистрация</h1>
+    <section class="card">
+        <div class="card-head">
+            <h1>Создайте аккаунт</h1>
+            <p class="subtitle">Пара секунд — и вы внутри.</p>
+        </div>
+
         <form id="register-form" novalidate>
-            <div>
+            <div class="field">
                 <label for="username">Имя пользователя</label>
-                <input type="text" id="username" name="username" required minlength="3" />
+                <div class="control">
+                    <span class="icon" aria-hidden="true">
+                        <!-- user -->
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M20 21a8 8 0 0 0-16 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                    <input type="text" id="username" name="username" required minlength="3" placeholder="Например: ffanjex" autocomplete="username" />
+                </div>
+                <small class="hint">Минимум 3 символа</small>
             </div>
-            <div>
+
+            <div class="field">
                 <label for="email">Почта</label>
-                <input type="email" id="email" name="email" required />
+                <div class="control">
+                    <span class="icon" aria-hidden="true">
+                        <!-- mail -->
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M4 6h16v12H4V6Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <input type="email" id="email" name="email" required placeholder="name@example.com" autocomplete="email" />
+                </div>
             </div>
-            <div>
+
+            <div class="field">
                 <label for="password">Пароль</label>
-                <input type="password" id="password" name="password" required minlength="6" />
+                <div class="control">
+                    <span class="icon" aria-hidden="true">
+                        <!-- lock -->
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M7 11V8a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M6 11h12v10H6V11Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <input type="password" id="password" name="password" required minlength="6" placeholder="Минимум 6 символов" autocomplete="new-password" />
+                    <button class="ghost" type="button" id="togglePass" aria-label="Показать пароль">Показать</button>
+                </div>
+                <small class="hint">Используйте буквы и цифры — так надёжнее</small>
             </div>
-            <button type="submit">Зарегистрироваться</button>
+
+            <div class="field">
+                <label for="sex">Пол</label>
+                <div class="control">
+                    <span class="icon" aria-hidden="true">
+                        <!-- sparkle -->
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2l1.5 6L20 10l-6.5 2L12 18l-1.5-6L4 10l6.5-2L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <select id="sex" name="sex" required>
+                        <option value="" disabled selected>Выберите</option>
+                        <option value="MALE">Мужской</option>
+                        <option value="FEMALE">Женский</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="primary" type="submit">
+                <span>Зарегистрироваться</span>
+                <span class="btn-glow" aria-hidden="true"></span>
+            </button>
+
             <p class="auth-footer">
                 Уже есть аккаунт? <a href="/login">Войти</a>
             </p>
+
+            <p id="register-msg" class="msg" role="status" aria-live="polite"></p>
         </form>
-        <p id="register-msg"></p>
     </section>
 </main>
 
 <footer class="footer">
-    <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
+    <p>© 2025 Weather Forecast • Все права защищены</p>
 </footer>
 
 <script>
     const form = document.getElementById('register-form');
     const msg = document.getElementById('register-msg');
+    const togglePass = document.getElementById('togglePass');
+    const passInput = document.getElementById('password');
+
+    togglePass.addEventListener('click', () => {
+        const isPassword = passInput.type === 'password';
+        passInput.type = isPassword ? 'text' : 'password';
+        togglePass.textContent = isPassword ? 'Скрыть' : 'Показать';
+    });
+
+    function markInvalid(el, text) {
+        el.classList.add('error');
+        if (text) el.setCustomValidity(text);
+    }
+
+    function clearInvalid(el) {
+        el.classList.remove('error');
+        el.setCustomValidity('');
+    }
 
     function validateInput(input) {
+        // сбросим кастомную ошибку, если была
+        input.setCustomValidity('');
+
+        // basic html validity
         if (!input.checkValidity()) {
             input.classList.add('error');
             return false;
@@ -57,22 +144,24 @@
     }
 
     form.addEventListener('input', (e) => {
-        validateInput(e.target);
+        const el = e.target;
+        if (el.matches('input, select')) validateInput(el);
         msg.textContent = '';
+        msg.className = 'msg';
     });
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const inputs = Array.from(form.querySelectorAll('input'));
+        const fields = Array.from(form.querySelectorAll('input, select'));
         let valid = true;
 
-        inputs.forEach(input => {
-            if (!validateInput(input)) valid = false;
+        fields.forEach(f => {
+            if (!validateInput(f)) valid = false;
         });
 
         if (!valid) {
-            msg.style.color = 'crimson';
+            msg.className = 'msg error';
             msg.textContent = 'Пожалуйста, заполните все поля правильно.';
             return;
         }
@@ -80,30 +169,32 @@
         const body = {
             username: form.username.value.trim(),
             email: form.email.value.trim(),
-            password: form.password.value.trim()
+            password: form.password.value.trim(),
+            sex: form.sex.value
         };
 
-        msg.style.color = 'black';
+        msg.className = 'msg info';
         msg.textContent = 'Отправка...';
 
-        fetch('/api/auth/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-        })
-            .then(res => {
-                if (res.ok) {
-                    msg.style.color = 'green';
-                    msg.textContent = 'Успешно! Перенаправление...';
-                    setTimeout(() => window.location.href = '/login', 1500);
-                } else {
-                    return res.text().then(text => { throw new Error(text); });
-                }
-            })
-            .catch(err => {
-                msg.style.color = 'crimson';
-                msg.textContent = 'Ошибка: ' + err.message;
+        try {
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
             });
+
+            if (res.ok) {
+                msg.className = 'msg success';
+                msg.textContent = 'Успешно! Перенаправление...';
+                setTimeout(() => window.location.href = '/login', 1200);
+            } else {
+                const text = await res.text();
+                throw new Error(text || 'Не удалось зарегистрироваться');
+            }
+        } catch (err) {
+            msg.className = 'msg error';
+            msg.textContent = 'Ошибка: ' + err.message;
+        }
     });
 </script>
 </body>
