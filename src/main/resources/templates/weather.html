@@ -1,70 +1,140 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
-    <title>⛅Weather App ⛅</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
-    <link rel="stylesheet" type="text/css" href="/weather.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WeatherForecast • Поиск</title>
+    <link rel="stylesheet" href="/weather.css">
 </head>
 <body>
+<div class="bg"></div>
+<div class="noise"></div>
 
 <header class="header">
-    <a href="/home" class="btn-return">⬅️ Вернуться на главную</a>
+    <div class="container header-inner">
+        <a href="/home" class="chip">
+            <span class="chip-ico">⬅️</span>
+            <span>На главную</span>
+        </a>
 
-    <h1 class="title" id="animated-title">
-        <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
-        <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
-    </h1>
+        <div class="brand">
+            <div class="logo" aria-hidden="true">WF</div>
+            <div class="brand-text">
+                <div class="brand-title" id="animated-title">
+                    <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
+                    <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
+                </div>
+                <div class="brand-subtitle">Поиск погоды и прогнозов</div>
+            </div>
+        </div>
 
-    <form th:action="@{/logout}" method="post" class="logout-form">
-        <button type="submit" class="btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
-    </form>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="chip danger">
+                <span class="chip-ico">🚪</span>
+                <span>Выйти</span>
+            </button>
+        </form>
+    </div>
 </header>
 
-<div class="container">
-    <div class="card">
-        <div class="card-body">
-            <h1 class="card-title">Weather App</h1>
-            <form method="get" id="weather-form">
-                <div class="form-group input-wrapper" style="position:relative;">
-                    <input type="text" class="form-control" name="city" id="city-input" placeholder="Введите название города" required autocomplete="off">
-                    <button type="button" id="clear-btn" title="Очистить поле" style="
-                        position: absolute;
-                        right: 12px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        background: transparent;
-                        border: none;
-                        font-size: 1.2rem;
-                        cursor: pointer;
-                        color: #555;
-                        display: none;">&times;</button>
-                    <div id="input-hint" style="margin-top:5px; font-size:0.9rem; color:#ddd; font-style:italic; display:none;">
-                        Введите название города на русском или английском
-                    </div>
+<main class="main">
+    <div class="container grid">
+        <section class="card hero">
+            <div class="hero-head">
+                <div class="badge">⛅ Weather</div>
+                <div>
+                    <h1 class="hero-title">Погода в городе</h1>
+                    <p class="hero-subtitle">Введите город на русском или английском и выберите режим.</p>
                 </div>
-                <div class="btn-group" role="group">
-                    <button formaction="/weather" type="submit" class="btn btn-primary">☁️ Узнать погоду</button>
-                    <button formaction="/weather/forecast" type="submit" class="btn btn-info">📅 Прогноз на 5 дней</button>
+            </div>
+
+            <form method="get" id="weather-form" class="form">
+                <div class="field">
+                    <label for="city-input">Город</label>
+                    <div class="control">
+                        <span class="icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M12 22s7-4.5 7-12a7 7 0 1 0-14 0c0 7.5 7 12 7 12Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                <path d="M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </span>
+                        <input type="text" name="city" id="city-input" placeholder="Например: Berlin" required autocomplete="off">
+                        <button type="button" id="clear-btn" class="clear" aria-label="Очистить">&times;</button>
+                    </div>
+                    <div id="input-hint" class="hint">Введите название города на русском или английском</div>
+                </div>
+
+                <div class="actions">
+                    <button formaction="/weather" type="submit" class="btn primary">
+                        <span class="btn-ico">☁️</span>
+                        <span>Узнать погоду</span>
+                    </button>
+                    <button formaction="/weather/forecast" type="submit" class="btn info">
+                        <span class="btn-ico">📅</span>
+                        <span>Прогноз на 5 дней</span>
+                    </button>
                 </div>
             </form>
 
-            <form action="/weather/saved/data" method="get" style="margin-top:1rem;">
-                <button type="submit" class="btn btn-primary">
-                    📍 Погода в сохранённом городе
+            <form action="/weather/saved/data" method="get" class="saved">
+                <button type="submit" class="btn ghost">
+                    <span class="btn-ico">📍</span>
+                    <span>Погода в сохранённом городе</span>
                 </button>
             </form>
-        </div>
+        </section>
+
+        <section class="card side">
+            <h2 class="side-title">Быстрые подсказки</h2>
+
+            <div class="tips">
+                <div class="tip">
+                    <div class="tip-ico">⚡</div>
+                    <div class="tip-text">
+                        <div class="tip-title">Enter</div>
+                        <div class="tip-desc">Можно нажать Enter для отправки.</div>
+                    </div>
+                </div>
+                <div class="tip">
+                    <div class="tip-ico">🌍</div>
+                    <div class="tip-text">
+                        <div class="tip-title">RU/EN</div>
+                        <div class="tip-desc">Москва / Moscow — оба варианта работают.</div>
+                    </div>
+                </div>
+                <div class="tip">
+                    <div class="tip-ico">⭐</div>
+                    <div class="tip-text">
+                        <div class="tip-title">Сохранённый город</div>
+                        <div class="tip-desc">Откройте погоду для города по умолчанию.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mini">
+                <div class="mini-card">
+                    <div class="mini-num">2</div>
+                    <div class="mini-text">режима</div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-num">5</div>
+                    <div class="mini-text">дней</div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-num">∞</div>
+                    <div class="mini-text">городов</div>
+                </div>
+            </div>
+        </section>
     </div>
-</div>
+</main>
 
 <footer class="footer">
-    <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
+    <div class="container footer-inner">
+        <p>© 2025 Weather Forecast • Все права защищены</p>
+        <p class="footer-muted">Made with ☁️ &amp; ☀️</p>
+    </div>
 </footer>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -72,33 +142,28 @@
         titleSpans.forEach((span, idx) => {
             span.style.opacity = '0';
             span.style.transition = 'opacity 0.4s ease';
-            setTimeout(() => {
-                span.style.opacity = '1';
-            }, idx * 100);
+            setTimeout(() => span.style.opacity = '1', idx * 70);
         });
 
         const input = document.getElementById('city-input');
         const clearBtn = document.getElementById('clear-btn');
         const hint = document.getElementById('input-hint');
 
-        input.addEventListener('input', () => {
-            if(input.value.length > 0){
-                clearBtn.style.display = 'block';
-                hint.style.display = 'block';
-            } else {
-                clearBtn.style.display = 'none';
-                hint.style.display = 'none';
-            }
-        });
+        const sync = () => {
+            const has = input.value.trim().length > 0;
+            clearBtn.style.display = has ? 'grid' : 'none';
+            hint.style.display = has ? 'block' : 'none';
+        };
 
+        input.addEventListener('input', sync);
         clearBtn.addEventListener('click', () => {
             input.value = '';
-            clearBtn.style.display = 'none';
-            hint.style.display = 'none';
+            sync();
             input.focus();
         });
+
+        sync();
     });
 </script>
-
 </body>
 </html>

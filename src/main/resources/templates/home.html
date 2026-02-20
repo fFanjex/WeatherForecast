@@ -3,43 +3,157 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Weather Forecast</title>
+    <title>WeatherForecast • Home</title>
     <link rel="stylesheet" href="/home.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
 </head>
 <body>
+<div class="bg"></div>
+<div class="noise"></div>
+
 <header class="header">
-    <h1 class="title">WeatherForecast</h1>
-    <form id="logout" action="/logout" method="post">
-        <button class="logout-btn">Выход</button>
-    </form>
+    <div class="container header-inner">
+        <div class="brand">
+            <div class="logo" aria-hidden="true">WF</div>
+            <div class="brand-text">
+                <div class="brand-title">WeatherForecast</div>
+                <div class="brand-subtitle">Погода • Факты • Рекомендации</div>
+            </div>
+        </div>
+
+        <form id="logout" action="/logout" method="post">
+            <button class="logout-btn" type="submit" aria-label="Выйти">
+                <span class="logout-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M10 7V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2v-1"
+                              stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M14 12H3m0 0 3-3M3 12l3 3"
+                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <span>Выход</span>
+            </button>
+        </form>
+    </div>
 </header>
 
 <main class="main-content">
-    <section class="description-section" id="description-card">
-        <h2 id="welcome-title">Добро пожаловать!</h2>
-        <div class="user-info">
-            <p><span class="label">Пользователь:</span> <span class="value" id="user-id">...</span></p>
-            <p><span class="label">Сохранённый город:</span> <span class="value" id="city-name">Загрузка...</span></p>
-        </div>
-        <p class="intro-text">🌍 Получите актуальную информацию о погоде в любом уголке планеты!</p>
-    </section>
+    <div class="container grid">
+        <section class="card hero" id="description-card">
+            <div class="hero-top">
+                <div class="badge">🌤 Live</div>
+                <div class="hero-title">
+                    <h1 id="welcome-title">Добро пожаловать!</h1>
+                    <p class="subtitle">Готовы посмотреть погоду и получить полезные советы?</p>
+                </div>
+            </div>
 
-    <section class="button-section">
-        <form action="/view-weather" method="get">
-            <button class="action-btn btn-weather">🌤 Посмотреть погоду</button>
-        </form>
-        <form action="/interesting-fact" method="get">
-            <button class="action-btn btn-fact">💡 Интересный факт</button>
-        </form>
-        <form action="/clothing-advice" method="get">
-            <button class="action-btn btn-clothing">🧥 Советы по одежде</button>
-        </form>
-    </section>
+            <div class="user-cards">
+                <div class="info-tile">
+                    <div class="tile-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M20 21a8 8 0 0 0-16 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="label">Пользователь</div>
+                        <div class="value" id="user-id">Загрузка…</div>
+                    </div>
+                </div>
+
+                <div class="info-tile">
+                    <div class="tile-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M12 22s7-4.5 7-12a7 7 0 1 0-14 0c0 7.5 7 12 7 12Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="label">Сохранённый город</div>
+                        <div class="value skeleton" id="city-name">Загрузка…</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-footer">
+                <p class="intro">
+                    🌍 Получите актуальную информацию о погоде в любом уголке планеты — и рекомендации, как одеться сегодня.
+                </p>
+                <div class="mini-stats">
+                    <div class="stat">
+                        <div class="stat-num">3</div>
+                        <div class="stat-text">раздела</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-num">⚡</div>
+                        <div class="stat-text">быстро</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-num">🎯</div>
+                        <div class="stat-text">полезно</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card actions">
+            <h2 class="actions-title">Что хотите сделать?</h2>
+            <p class="actions-subtitle">Выберите раздел ниже.</p>
+
+            <div class="actions-grid">
+                <form action="/view-weather" method="get">
+                    <button class="action-tile weather" type="submit">
+                        <div class="tile-head">
+                            <div class="tile-icon">🌤</div>
+                            <div class="tile-text">
+                                <div class="tile-title">Погода</div>
+                                <div class="tile-desc">Прогноз, температура, условия</div>
+                            </div>
+                        </div>
+                        <div class="tile-cta">Открыть →</div>
+                    </button>
+                </form>
+
+                <form action="/interesting-fact" method="get">
+                    <button class="action-tile fact" type="submit">
+                        <div class="tile-head">
+                            <div class="tile-icon">💡</div>
+                            <div class="tile-text">
+                                <div class="tile-title">Интересный факт</div>
+                                <div class="tile-desc">Коротко и познавательно</div>
+                            </div>
+                        </div>
+                        <div class="tile-cta">Открыть →</div>
+                    </button>
+                </form>
+
+                <form action="/clothing-advice" method="get">
+                    <button class="action-tile clothes" type="submit">
+                        <div class="tile-head">
+                            <div class="tile-icon">🧥</div>
+                            <div class="tile-text">
+                                <div class="tile-title">Советы по одежде</div>
+                                <div class="tile-desc">Как одеться по погоде</div>
+                            </div>
+                        </div>
+                        <div class="tile-cta">Открыть →</div>
+                    </button>
+                </form>
+            </div>
+
+            <div class="tip">
+                <span class="tip-ico">✨</span>
+                <span>Совет: сохраните город — и прогноз будет всегда под рукой.</span>
+            </div>
+        </section>
+    </div>
 </main>
 
 <footer class="footer">
-    <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
+    <div class="container footer-inner">
+        <p>© 2025 Weather Forecast • Все права защищены</p>
+        <p class="footer-muted">Made with ☁️ &amp; ☀️</p>
+    </div>
 </footer>
 
 <script>
@@ -53,10 +167,15 @@
         })
         .then(data => {
             document.getElementById('user-id').textContent = data.username || 'Неизвестно';
-            document.getElementById('city-name').textContent = data.savedCity || 'не выбрано';
+
+            const city = document.getElementById('city-name');
+            city.classList.remove('skeleton');
+            city.textContent = data.savedCity || 'не выбрано';
         })
         .catch(() => {
-            document.getElementById('city-name').textContent = 'Ошибка загрузки';
+            const city = document.getElementById('city-name');
+            city.classList.remove('skeleton');
+            city.textContent = 'Ошибка загрузки';
         });
 </script>
 </body>
