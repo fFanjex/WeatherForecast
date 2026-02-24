@@ -3,79 +3,174 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>📌 Интересные факты</title>
+    <title>WeatherForecast • Факты</title>
     <link rel="stylesheet" href="/facts.css" />
 </head>
 <body>
+<div class="bg"></div>
+<div class="noise"></div>
 
-<header class="header text-center mt-3">
-    <h1 class="title">
-        <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
-        <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
-    </h1>
-</header>
-
-<div class="container mt-5">
-    <ul class="fact-list list-unstyled">
-        <li class="fact-item mb-3" th:each="fact : ${factsPage.content}">
-            <p th:text="${fact.text}">Текст факта</p>
-        </li>
-    </ul>
-
-    <div class="pagination d-flex justify-content-center align-items-center mt-4 gap-3">
-        <a th:if="${currentPage > 0}" th:href="@{/interesting-fact(page=${currentPage - 1})}" class="btn-pagination btn btn-outline-primary">
-            ⬅️ Назад
+<header class="header">
+    <div class="container header-inner">
+        <a href="/home" class="chip">
+            <span class="chip-ico">⬅️</span>
+            <span>На главную</span>
         </a>
 
-        <span>
-            Страница <strong th:text="${currentPage + 1}">1</strong> из <strong th:text="${totalPages}">1</strong>
-        </span>
+        <div class="brand">
+            <div class="logo" aria-hidden="true">WF</div>
+            <div class="brand-text">
+                <div class="brand-title" id="animated-title">
+                    <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
+                    <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
+                </div>
+                <div class="brand-subtitle">Интересные факты о погоде</div>
+            </div>
+        </div>
 
-        <a th:if="${currentPage + 1 < totalPages}" th:href="@{/interesting-fact(page=${currentPage + 1})}" class="btn-pagination btn btn-outline-primary">
-            Вперед ➡️
-        </a>
-    </div>
-</div>
-
-<footer class="footer text-center mt-5">
-    <div class="footer-buttons mb-3">
-        <a href="/home" class="btn btn-return btn-secondary">⬅️ Вернуться на главную</a>
-        <form th:action="@{/logout}" method="post" style="display:inline;">
-            <button type="submit" class="btn btn-fact btn-danger">╰┈➤🚪 Выйти из аккаунта</button>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="chip danger">
+                <span class="chip-ico">🚪</span>
+                <span>Выйти</span>
+            </button>
         </form>
     </div>
-    <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
+</header>
+
+<main class="main">
+    <div class="container grid">
+        <section class="card hero">
+            <div class="hero-head">
+                <div class="badge">📌 Facts</div>
+                <div>
+                    <h1 class="hero-title">Подборка фактов</h1>
+                    <p class="hero-subtitle">Листайте страницы и читайте короткие интересности.</p>
+                </div>
+            </div>
+
+            <div class="facts">
+                <div class="fact" th:each="fact, it : ${factsPage.content}">
+                    <div class="fact-top">
+                        <div class="fact-num" th:text="${(currentPage * factsPage.size) + it.index + 1}">1</div>
+                        <div class="fact-dot"></div>
+                    </div>
+                    <p class="fact-text" th:text="${fact.text}">Текст факта</p>
+                </div>
+            </div>
+
+            <div class="pager">
+                <a th:if="${currentPage > 0}"
+                   th:href="@{/interesting-fact(page=${currentPage - 1})}"
+                   class="page-btn">
+                    ⬅️ Назад
+                </a>
+
+                <div class="page-indicator">
+                    <span class="dot"></span>
+                    <span>Страница</span>
+                    <span class="strong" th:text="${currentPage + 1}">1</span>
+                    <span class="sep">/</span>
+                    <span class="strong" th:text="${totalPages}">1</span>
+                </div>
+
+                <a th:if="${currentPage + 1 < totalPages}"
+                   th:href="@{/interesting-fact(page=${currentPage + 1})}"
+                   class="page-btn">
+                    Вперед ➡️
+                </a>
+            </div>
+        </section>
+
+        <section class="card side">
+            <h2 class="side-title">Быстрые действия</h2>
+
+            <div class="tiles">
+                <a href="/view-weather" class="tile">
+                    <div class="tile-icon">🌤</div>
+                    <div class="tile-text">
+                        <div class="tile-title">Погода</div>
+                        <div class="tile-desc">Перейти к поиску</div>
+                    </div>
+                    <div class="tile-cta">Открыть →</div>
+                </a>
+
+                <a href="/clothing-advice" class="tile">
+                    <div class="tile-icon">🧥</div>
+                    <div class="tile-text">
+                        <div class="tile-title">Одежда</div>
+                        <div class="tile-desc">Советы по погоде</div>
+                    </div>
+                    <div class="tile-cta">Открыть →</div>
+                </a>
+
+                <form th:action="@{/logout}" method="post" class="tile-form">
+                    <button type="submit" class="tile danger">
+                        <div class="tile-icon">🚪</div>
+                        <div class="tile-text">
+                            <div class="tile-title">Выход</div>
+                            <div class="tile-desc">Завершить сессию</div>
+                        </div>
+                        <div class="tile-cta">Выйти →</div>
+                    </button>
+                </form>
+            </div>
+
+            <div class="mini">
+                <div class="mini-card">
+                    <div class="mini-num">📖</div>
+                    <div class="mini-text">читать</div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-num">⚡</div>
+                    <div class="mini-text">быстро</div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-num">✨</div>
+                    <div class="mini-text">интересно</div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container footer-inner">
+        <p>© 2025 Weather Forecast • Все права защищены</p>
+        <p class="footer-muted">Made with ☁️ &amp; ☀️</p>
+    </div>
 </footer>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const factItems = document.querySelectorAll(".fact-item");
+        const titleSpans = document.querySelectorAll('#animated-title span');
+        titleSpans.forEach((span, idx) => {
+            span.style.opacity = '0';
+            span.style.transition = 'opacity 0.4s ease';
+            setTimeout(() => span.style.opacity = '1', idx * 70);
+        });
 
+        const factItems = document.querySelectorAll(".fact");
         factItems.forEach((item, index) => {
             item.style.opacity = 0;
-            item.style.transform = "translateY(20px)";
+            item.style.transform = "translateY(10px)";
             setTimeout(() => {
                 item.style.transition = "all 0.6s ease";
                 item.style.opacity = 1;
                 item.style.transform = "translateY(0)";
-            }, index * 120);
+            }, index * 90);
         });
 
-        const paginationLinks = document.querySelectorAll(".btn-pagination");
-
-        paginationLinks.forEach(link => {
+        const links = document.querySelectorAll(".page-btn");
+        links.forEach(link => {
             link.addEventListener("click", (e) => {
+                if (link.classList.contains("disabled")) return;
                 e.preventDefault();
-                document.body.style.transition = "opacity 0.4s ease";
+                document.body.style.transition = "opacity 0.35s ease";
                 document.body.style.opacity = "0";
-
-                setTimeout(() => {
-                    window.location.href = link.href;
-                }, 400);
+                setTimeout(() => window.location.href = link.href, 350);
             });
         });
     });
 </script>
-
 </body>
 </html>

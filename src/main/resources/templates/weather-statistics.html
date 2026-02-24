@@ -1,71 +1,180 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
-    <title>⛅ Weather App ⛅</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WeatherForecast • Статистика</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
     <link rel="stylesheet" type="text/css" href="/weather-statistics.css">
 </head>
 <body>
+<div class="bg"></div>
+<div class="noise"></div>
 
 <header class="header">
-    <h1 class="title">
-        <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
-        <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
-    </h1>
+    <div class="container header-inner">
+        <a href="/view-weather" class="chip">
+            <span class="chip-ico">⬅️</span>
+            <span>Назад</span>
+        </a>
+
+        <div class="brand">
+            <div class="logo" aria-hidden="true">WF</div>
+            <div class="brand-text">
+                <div class="brand-title" id="animated-title">
+                    <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
+                    <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
+                </div>
+                <div class="brand-subtitle">Сводка по текущей погоде</div>
+            </div>
+        </div>
+
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="chip danger">
+                <span class="chip-ico">🚪</span>
+                <span>Выйти</span>
+            </button>
+        </form>
+    </div>
 </header>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h1 class="card-title">Погода в городе:
+<main class="main">
+    <div class="container grid">
+        <section class="card hero">
+            <div class="hero-head">
+                <div class="badge">📍 Сейчас</div>
+                <div>
+                    <h1 class="hero-title">
                         <span th:text="${city}">Город</span>,
                         <span th:text="${country}">Country</span>
                     </h1>
+                    <p class="hero-subtitle">
+                        <span th:text="${weatherDescription}">Описание</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="summary">
+                <div class="icon-wrap">
                     <span th:class="'wi ' + ${weatherIcon} + ' weather-icon'"></span>
-                    <p class="card-text"><strong>Описание:</strong> <span th:text="${weatherDescription}">Description</span></p>
-                    <p class="card-text"><strong>Температура:</strong> <span th:text="${temperature}">Temperature</span>°C</p>
-                    <p class="card-text"><strong>Влажность:</strong> <span th:text="${humidity}">Humidity</span>%</p>
-                    <p class="card-text"><strong>Скорость ветра:</strong> <span th:text="${windSpeed}">Wind Speed</span> м/с</p>
+                </div>
 
-                    <form action="/council-advice" method="get">
-                        <input type="hidden" name="temperature" th:value="${temperature}">
-                        <input type="hidden" name="humidity" th:value="${humidity}">
-                        <input type="hidden" name="windSpeed" th:value="${windSpeed}">
-                        <button type="submit" class="btn btn-custom">👕 Помочь Вам одеться по погоде?</button>
-                    </form>
-
-                    <form action="/save-city" method="post">
-                        <input type="hidden" name="city" th:value="${city}">
-                        <button type="submit" class="btn btn-custom mt-2">⭐ Сохранить этот город</button>
-                    </form>
-
-                    <a href="/view-weather" class="btn btn-custom mt-2">Вернуться назад</a>
-
-                    <div th:if="${error}" class="alert alert-danger mt-3">
-                        <p>Error: <span th:text="${error}"></span></p>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-label">Температура</div>
+                        <div class="stat-value">
+                            <span th:text="${temperature}">0</span><span class="unit">°C</span>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Влажность</div>
+                        <div class="stat-value">
+                            <span th:text="${humidity}">0</span><span class="unit">%</span>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Ветер</div>
+                        <div class="stat-value">
+                            <span th:text="${windSpeed}">0</span><span class="unit">м/с</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div class="actions">
+                <form action="/council-advice" method="get" class="action-form">
+                    <input type="hidden" name="temperature" th:value="${temperature}">
+                    <input type="hidden" name="humidity" th:value="${humidity}">
+                    <input type="hidden" name="windSpeed" th:value="${windSpeed}">
+                    <button type="submit" class="btn info">
+                        <span class="btn-ico">👕</span>
+                        <span>Подобрать одежду</span>
+                    </button>
+                </form>
+
+                <form action="/save-city" method="post" class="action-form">
+                    <input type="hidden" name="city" th:value="${city}">
+                    <button type="submit" class="btn primary">
+                        <span class="btn-ico">⭐</span>
+                        <span>Сохранить город</span>
+                    </button>
+                </form>
+            </div>
+
+            <div th:if="${error}" class="alert">
+                <div class="alert-title">Ошибка</div>
+                <div class="alert-text" th:text="${error}"></div>
+            </div>
+        </section>
+
+        <section class="card side">
+            <h2 class="side-title">Действия</h2>
+
+            <div class="tiles">
+                <a href="/home" class="tile">
+                    <div class="tile-icon">🏠</div>
+                    <div class="tile-text">
+                        <div class="tile-title">Главная</div>
+                        <div class="tile-desc">Вернуться в меню</div>
+                    </div>
+                    <div class="tile-cta">Открыть →</div>
+                </a>
+
+                <a href="/view-weather" class="tile">
+                    <div class="tile-icon">🔎</div>
+                    <div class="tile-text">
+                        <div class="tile-title">Новый поиск</div>
+                        <div class="tile-desc">Проверить другой город</div>
+                    </div>
+                    <div class="tile-cta">Открыть →</div>
+                </a>
+
+                <form th:action="@{/logout}" method="post" class="tile-form">
+                    <button type="submit" class="tile danger">
+                        <div class="tile-icon">🚪</div>
+                        <div class="tile-text">
+                            <div class="tile-title">Выход</div>
+                            <div class="tile-desc">Завершить сессию</div>
+                        </div>
+                        <div class="tile-cta">Выйти →</div>
+                    </button>
+                </form>
+            </div>
+
+            <div class="mini">
+                <div class="mini-card">
+                    <div class="mini-num">°C</div>
+                    <div class="mini-text">температура</div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-num">%</div>
+                    <div class="mini-text">влажность</div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-num">м/с</div>
+                    <div class="mini-text">ветер</div>
+                </div>
+            </div>
+        </section>
     </div>
-</div>
+</main>
 
 <footer class="footer">
-    <div class="footer-buttons">
-        <a href="/home" class="btn btn-return">⬅️ Вернуться на главную</a>
-        <form th:action="@{/logout}" method="post">
-            <button type="submit" class="btn btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
-        </form>
+    <div class="container footer-inner">
+        <p>© 2026 Weather Forecast • Все права защищены</p>
+        <p class="footer-muted">Made with ☁️ &amp; ☀️</p>
     </div>
-    <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
 </footer>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const titleSpans = document.querySelectorAll('#animated-title span');
+        titleSpans.forEach((span, idx) => {
+            span.style.opacity = '0';
+            span.style.transition = 'opacity 0.4s ease';
+            setTimeout(() => span.style.opacity = '1', idx * 70);
+        });
+    });
+</script>
 </body>
 </html>

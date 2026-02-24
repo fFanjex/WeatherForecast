@@ -1,41 +1,159 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
-    <title>Совет по одежде</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WeatherForecast • Совет по одежде</title>
     <link rel="stylesheet" type="text/css" href="/advice.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+<div class="bg"></div>
+<div class="noise"></div>
 
-<div class="wrapper">
-    <header class="header">
-        <h1 class="title">
-            <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
-            <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
-        </h1>
-    </header>
+<header class="header">
+    <div class="container header-inner">
+        <a href="/view-weather" class="chip">
+            <span class="chip-ico">⬅️</span>
+            <span>Назад</span>
+        </a>
 
-    <div class="container text-center mt-5">
-        <h1>🥼 Совет по одежде 🌡</h1>
-        <div class="advice-box">
-            <p class="lead advice-text" th:text="${advice}">Здесь будет совет</p>
+        <div class="brand">
+            <div class="logo" aria-hidden="true">WF</div>
+            <div class="brand-text">
+                <div class="brand-title" id="animated-title">
+                    <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
+                    <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
+                </div>
+                <div class="brand-subtitle">Совет по одежде</div>
+            </div>
         </div>
-        <a href="/view-weather" class="btn btn-custom mt-3">⬅ Вернуться назад</a>
-        <button id="save-advice-btn" class="btn btn-custom mt-3">💾 Сохранить совет</button>
+
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="chip danger">
+                <span class="chip-ico">🚪</span>
+                <span>Выйти</span>
+            </button>
+        </form>
     </div>
+</header>
 
-    <footer class="footer">
-        <div class="footer-buttons">
-            <form th:action="@{/logout}" method="post" style="display:inline;">
-                <button type="submit" class="btn btn-fact">╰┈➤🚪 Выйти из аккаунта</button>
-            </form>
-        </div>
-        <p>&copy; 2025 Weather Forecast. Все права защищены.</p>
-    </footer>
-</div>
+<main class="main">
+    <div class="container grid">
+        <section class="card hero">
+            <div class="hero-head">
+                <div class="badge">🥼 Advice</div>
+                <div>
+                    <h1 class="hero-title">Как лучше одеться</h1>
+                    <p class="hero-subtitle">Совет формируется по температуре, влажности и ветру.</p>
+                </div>
+            </div>
+
+            <div class="advice-box">
+                <p class="advice-text" th:text="${advice}">Здесь будет совет</p>
+            </div>
+
+            <div class="actions">
+                <a href="/view-weather" class="btn ghost">
+                    <span class="btn-ico">⬅️</span>
+                    <span>Вернуться назад</span>
+                </a>
+                <button id="save-advice-btn" class="btn primary" type="button">
+                    <span class="btn-ico">💾</span>
+                    <span>Сохранить совет</span>
+                </button>
+            </div>
+
+            <div id="toast" class="toast" role="status" aria-live="polite">
+                <div class="toast-title" id="toast-title">Готово</div>
+                <div class="toast-text" id="toast-text">Сохранено</div>
+            </div>
+        </section>
+
+        <section class="card side">
+            <h2 class="side-title">Быстрые действия</h2>
+
+            <div class="tiles">
+                <a href="/home" class="tile">
+                    <div class="tile-icon">🏠</div>
+                    <div class="tile-text">
+                        <div class="tile-title">Главная</div>
+                        <div class="tile-desc">Вернуться в меню</div>
+                    </div>
+                    <div class="tile-cta">Открыть →</div>
+                </a>
+
+                <a href="/view-weather" class="tile">
+                    <div class="tile-icon">🌤</div>
+                    <div class="tile-text">
+                        <div class="tile-title">Погода</div>
+                        <div class="tile-desc">Проверить другой город</div>
+                    </div>
+                    <div class="tile-cta">Открыть →</div>
+                </a>
+
+                <form th:action="@{/logout}" method="post" class="tile-form">
+                    <button type="submit" class="tile danger">
+                        <div class="tile-icon">🚪</div>
+                        <div class="tile-text">
+                            <div class="tile-title">Выход</div>
+                            <div class="tile-desc">Завершить сессию</div>
+                        </div>
+                        <div class="tile-cta">Выйти →</div>
+                    </button>
+                </form>
+            </div>
+
+            <div class="mini">
+                <div class="mini-card">
+                    <div class="mini-num">🥶</div>
+                    <div class="mini-text">холодно</div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-num">🌦</div>
+                    <div class="mini-text">переменно</div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-num">☀️</div>
+                    <div class="mini-text">тепло</div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container footer-inner">
+        <p>© 2025 Weather Forecast • Все права защищены</p>
+        <p class="footer-muted">Made with ☁️ &amp; ☀️</p>
+    </div>
+</footer>
 
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const titleSpans = document.querySelectorAll('#animated-title span');
+        titleSpans.forEach((span, idx) => {
+            span.style.opacity = '0';
+            span.style.transition = 'opacity 0.4s ease';
+            setTimeout(() => span.style.opacity = '1', idx * 70);
+        });
+    });
+
+    const toast = document.getElementById('toast');
+    const toastTitle = document.getElementById('toast-title');
+    const toastText = document.getElementById('toast-text');
+
+    const showToast = (title, text, ok=true) => {
+        toastTitle.textContent = title;
+        toastText.textContent = text;
+        toast.classList.remove('show');
+        toast.classList.remove('bad');
+        if(!ok) toast.classList.add('bad');
+        requestAnimationFrame(() => toast.classList.add('show'));
+        clearTimeout(window.__toastT);
+        window.__toastT = setTimeout(() => toast.classList.remove('show'), 2600);
+    };
+
     $(document).ready(function() {
         $("#save-advice-btn").click(function() {
             let adviceText = $(".advice-text").text();
@@ -45,15 +163,14 @@
                 type: "POST",
                 data: { adviceText: adviceText },
                 success: function(response) {
-                    alert("✅ " + response);
+                    showToast("Сохранено ✅", String(response || "Совет добавлен"));
                 },
                 error: function(xhr) {
-                    alert("❌ Ошибка: " + xhr.responseText);
+                    showToast("Ошибка ❌", String(xhr.responseText || "Не удалось сохранить"), false);
                 }
             });
         });
     });
 </script>
-
 </body>
 </html>
