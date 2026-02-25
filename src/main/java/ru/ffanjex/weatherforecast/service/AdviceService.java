@@ -57,7 +57,7 @@ public class AdviceService {
                             .put(new JSONObject()
                                     .put("role", "user")
                                     .put("content", prompt)))
-                    .put("max_tokens", 420)
+                    .put("max_tokens", 800)
                     .put("temperature", 0.4);
 
             HttpURLConnection connection = (HttpURLConnection) new URL(OPENAI_URL).openConnection();
@@ -65,14 +65,15 @@ public class AdviceService {
             connection.setRequestProperty("Authorization", "Bearer " + apiKey);
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
             connection.setDoOutput(true);
+
             try (OutputStream os = connection.getOutputStream()) {
                 os.write(body.toString().getBytes(StandardCharsets.UTF_8));
                 os.flush();
             }
+
             int code = connection.getResponseCode();
             String responseText = readResponse(code < 400 ? connection.getInputStream() : connection.getErrorStream());
             if (code >= 400) {
-
                 return "Ошибка OpenAI: HTTP " + code + " — " + extractErrorMessage(responseText);
             }
 
@@ -84,15 +85,10 @@ public class AdviceService {
 
             String content = choices.getJSONObject(0)
                     .getJSONObject("message")
-                    .optString("content", "");
+                    .optString("content", "")
+                    .trim();
 
-            content = content.trim();
             if (content.isEmpty()) return "Ошибка: модель вернула пустой текст.";
-
-            if (content.length() > 320) {
-                content = content.substring(0, 320).trim();
-            }
-
             return content;
 
         } catch (Exception e) {
@@ -103,7 +99,7 @@ public class AdviceService {
     public String generateAdvice(double temperature, double humidity, double windSpeed) {
         WeatherContext ctx = new WeatherContext(
                 temperature,
-                temperature,      // feelsLike неизвестен — ставим temp
+                temperature,
                 humidity,
                 windSpeed,
                 null,
