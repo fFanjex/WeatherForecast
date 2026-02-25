@@ -431,6 +431,60 @@ body {
     background: rgba(255,255,255,0.65);
 }
 
+.map-block{
+    margin-top:14px;
+    background:rgba(255,255,255,.58);
+    border:1px solid rgba(15,23,42,.10);
+    border-radius:18px;
+    padding:12px;
+    box-shadow:0 16px 34px rgba(0,0,0,.10);
+}
+
+.map-head{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:10px;
+}
+
+.map-title{
+    font-weight:900;
+    color:rgba(14,20,32,.92);
+}
+
+.map-sub{
+    font-weight:700;
+    font-size:.92rem;
+    color:rgba(14,20,32,.62);
+    white-space:nowrap;
+}
+
+.home-map{
+    width:100%;
+    height:220px;
+    border-radius:14px;
+    overflow:hidden;
+}
+
+.home-map .leaflet-container{
+    border-radius:14px;
+}
+
+.home-map .leaflet-control-attribution{
+    opacity:.7;
+}
+
+@media(max-width:540px){
+    .home-map{height:200px;}
+    .map-sub{display:none;}
+}
+
+.leaflet-control-attribution a{
+    background-image:none !important;
+    padding-left:0 !important;
+}
+
 @media (max-width: 920px) {
     .grid { grid-template-columns: 1fr; }
     .user-cards { grid-template-columns: 1fr; }

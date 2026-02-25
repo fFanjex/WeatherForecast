@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>WeatherForecast • Home</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="/home.css" />
 </head>
 <body>
@@ -79,6 +80,7 @@
                 <p class="intro">
                     🌍 Получите актуальную информацию о погоде в любом уголке планеты — и рекомендации, как одеться сегодня.
                 </p>
+
                 <div class="mini-stats">
                     <div class="stat">
                         <div class="stat-num">3</div>
@@ -92,6 +94,14 @@
                         <div class="stat-num">🎯</div>
                         <div class="stat-text">полезно</div>
                     </div>
+                </div>
+
+                <div class="map-block">
+                    <div class="map-head">
+                        <div class="map-title">📍 Ваше местоположение</div>
+                        <div class="map-sub" id="map-status">Определяем…</div>
+                    </div>
+                    <div id="home-map" class="home-map"></div>
                 </div>
             </div>
         </section>
@@ -156,6 +166,8 @@
     </div>
 </footer>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
     fetch('/api/home')
         .then(response => {
@@ -177,6 +189,50 @@
             city.classList.remove('skeleton');
             city.textContent = 'Ошибка загрузки';
         });
+
+    const mapStatus = document.getElementById('map-status');
+    const mapEl = document.getElementById('home-map');
+
+    const map = L.map(mapEl, {
+        zoomControl: false,
+        scrollWheelZoom: false
+    }).setView([55.751244, 37.618423], 10);
+
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    const marker = L.marker([55.751244, 37.618423]).addTo(map);
+
+    const setPoint = (lat, lon, label) => {
+        map.setView([lat, lon], 12, { animate: true });
+        marker.setLatLng([lat, lon]);
+        if (label) marker.bindPopup(label).openPopup();
+    };
+
+    const onGeoOk = (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        mapStatus.textContent = 'Определено по GPS';
+        setPoint(lat, lon, 'Вы здесь');
+    };
+
+    const onGeoFail = () => {
+        mapStatus.textContent = 'Нет доступа к GPS (разрешите геолокацию в браузере)';
+    };
+
+    if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(onGeoOk, onGeoFail, {
+            enableHighAccuracy: true,
+            timeout: 8000,
+            maximumAge: 60000
+        });
+    } else {
+        mapStatus.textContent = 'Геолокация не поддерживается';
+    }
 </script>
 </body>
 </html>
