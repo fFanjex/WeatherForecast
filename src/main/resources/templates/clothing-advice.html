@@ -3,46 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мои советы по одежде</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>WeatherForecast • Мои советы</title>
     <link rel="stylesheet" href="/clothing-advice.css">
 </head>
 <body>
 
+<div class="bg"></div>
+<div class="noise"></div>
+
 <header class="header">
-    <h1 class="title text-center mt-3">
-        <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
-        <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
-    </h1>
-</header>
+    <div class="container header-inner">
+        <a href="/home" class="chip">
+            <span class="chip-ico">🏠</span>
+            <span>Главная</span>
+        </a>
 
-<div class="container text-center mt-5">
-    <h1>📝 Мои советы по одежде</h1>
-    <div class="advice-container mt-4">
-        <ul class="advice-list list-unstyled">
-            <li class="advice-item mb-3" th:each="advice : ${adviceList}">
-                <span class="advice-date text-muted" th:text="${#temporals.format(advice.createdAt, 'dd MMMM yyyy HH:mm')}">
-                    01 января 2025 14:30
-                </span>
-                <p class="advice-text font-weight-bold" th:text="${advice.council}">Здесь будет совет</p>
-            </li>
-        </ul>
-    </div>
-</div>
+        <div class="brand">
+            <div class="logo">WF</div>
+            <div>
+                <div class="brand-title">
+                    WeatherForecast
+                </div>
+                <div class="brand-subtitle">Мои советы по одежде</div>
+            </div>
+        </div>
 
-<footer class="footer text-center mt-5">
-    <div class="footer-buttons mb-3">
-        <a href="/home" class="btn btn-return btn-secondary">⬅️ Вернуться на главную</a>
-        <form th:action="@{/logout}" method="post" style="display:inline;">
-            <button type="submit" class="btn btn-fact btn-danger">╰┈➤🚪 Выйти из аккаунта</button>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="chip danger">
+                <span class="chip-ico">🚪</span>
+                <span>Выйти</span>
+            </button>
         </form>
     </div>
-    <p>&copy; 2025 Clothing Advice. Все права защищены.</p>
-</footer>
+</header>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<main class="main">
+    <div class="container">
+        <section class="card">
+            <h1 class="page-title">📝 Мои советы по одежде</h1>
+            <p class="page-subtitle">
+                Здесь сохраняются все ранее полученные советы.
+            </p>
+
+            <div class="advice-container">
+                <ul class="advice-list">
+                    <li class="advice-item" th:each="advice : ${adviceList}">
+                        <div class="advice-date"
+                             th:text="${#temporals.format(advice.createdAt, 'dd MMMM yyyy HH:mm')}">
+                            01 января 2025 14:30
+                        </div>
+
+                        <p class="advice-text"
+                           th:text="${advice.council}">
+                            Здесь будет совет
+                        </p>
+                    </li>
+                </ul>
+            </div>
+
+        </section>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container footer-inner">
+        <p>© 2025 Weather Forecast • Все права защищены</p>
+        <p class="footer-muted">Made with ☁️ & ☀️</p>
+    </div>
+</footer>
 
 </body>
 </html>
