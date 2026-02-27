@@ -467,22 +467,9 @@ body {
     overflow:hidden;
 }
 
-.home-map .leaflet-container{
-    border-radius:14px;
-}
-
-.home-map .leaflet-control-attribution{
-    opacity:.7;
-}
-
 @media(max-width:540px){
     .home-map{height:200px;}
     .map-sub{display:none;}
-}
-
-.leaflet-control-attribution a{
-    background-image:none !important;
-    padding-left:0 !important;
 }
 
 @media (max-width: 920px) {
