@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WeatherForecast • Примеры одежды</title>
+  <link rel="stylesheet" type="text/css" href="/example-clothes.css">
+</head>
+<body>
+<div class="bg"></div>
+<div class="noise"></div>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="/council-advice" class="chip">
+      <span class="chip-ico">⬅️</span>
+      <span>Назад</span>
+    </a>
+
+    <div class="brand">
+      <div class="logo" aria-hidden="true">WF</div>
+      <div class="brand-text">
+        <div class="brand-title" id="animated-title">
+          <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
+          <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
+        </div>
+        <div class="brand-subtitle">Примеры одежды по совету</div>
+      </div>
+    </div>
+
+    <form th:action="@{/logout}" method="post" class="logout-form">
+      <button type="submit" class="chip danger">
+        <span class="chip-ico">🚪</span>
+        <span>Выйти</span>
+      </button>
+    </form>
+  </div>
+</header>
+
+<main class="main">
+  <div class="container layout">
+    <section class="card advice-card">
+      <div class="section-head">
+        <div class="badge">🥼 Advice</div>
+        <div>
+          <h1 class="section-title">Ваш совет по одежде</h1>
+          <p class="section-subtitle">Слева отображается текст совета, на основе которого будут подбираться образы.</p>
+        </div>
+      </div>
+
+      <div class="advice-box">
+        <p class="advice-text" th:text="${advice}">Здесь будет совет по одежде</p>
+      </div>
+
+      <div class="advice-actions">
+        <a href="/council-advice" class="btn ghost">
+          <span class="btn-ico">⬅️</span>
+          <span>Вернуться к совету</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="card gallery-card">
+      <div class="section-head">
+        <div class="badge alt">👕 Looks</div>
+        <div>
+          <h2 class="section-title">Примеры одежды</h2>
+          <p class="section-subtitle">Здесь будут отображаться изображения одежды и готовых образов.</p>
+        </div>
+      </div>
+
+      <div class="slider">
+        <button class="nav-btn left" type="button" id="prev-slide" aria-label="Предыдущая картинка">
+          <span>❮</span>
+        </button>
+
+        <div class="slider-stage">
+          <div class="slide active">
+            <div class="placeholder">
+              <div class="placeholder-icon">🧥</div>
+              <div class="placeholder-title">Будущий образ №1</div>
+              <div class="placeholder-text">Здесь появится первая картинка одежды</div>
+            </div>
+          </div>
+
+          <div class="slide">
+            <div class="placeholder">
+              <div class="placeholder-icon">👟</div>
+              <div class="placeholder-title">Будущий образ №2</div>
+              <div class="placeholder-text">Здесь появится вторая картинка одежды</div>
+            </div>
+          </div>
+
+          <div class="slide">
+            <div class="placeholder">
+              <div class="placeholder-icon">🧣</div>
+              <div class="placeholder-title">Будущий образ №3</div>
+              <div class="placeholder-text">Здесь появится третья картинка одежды</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="nav-btn right" type="button" id="next-slide" aria-label="Следующая картинка">
+          <span>❯</span>
+        </button>
+      </div>
+
+      <div class="slider-footer">
+        <div class="dots" id="slider-dots">
+          <button class="dot active" type="button" data-index="0" aria-label="Слайд 1"></button>
+          <button class="dot" type="button" data-index="1" aria-label="Слайд 2"></button>
+          <button class="dot" type="button" data-index="2" aria-label="Слайд 3"></button>
+        </div>
+
+        <a href="/example-clothes" class="btn primary">
+          <span class="btn-ico">✨</span>
+          <span>Обновить примеры</span>
+        </a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <p>© 2025 Weather Forecast • Все права защищены</p>
+    <p class="footer-muted">Made with ☁️ &amp; ☀️</p>
+  </div>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const titleSpans = document.querySelectorAll('#animated-title span');
+    titleSpans.forEach((span, idx) => {
+      span.style.opacity = '0';
+      span.style.transition = 'opacity 0.4s ease';
+      setTimeout(() => span.style.opacity = '1', idx * 70);
+    });
+
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    const prevBtn = document.getElementById('prev-slide');
+    const nextBtn = document.getElementById('next-slide');
+    let currentIndex = 0;
+
+    function showSlide(index) {
+      slides.forEach(slide => slide.classList.remove('active'));
+      dots.forEach(dot => dot.classList.remove('active'));
+
+      slides[index].classList.add('active');
+      dots[index].classList.add('active');
+      currentIndex = index;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      const newIndex = currentIndex === 0 ? slides.length - 1 : currentIndex - 1;
+      showSlide(newIndex);
+    });
+
+    nextBtn.addEventListener('click', () => {
+      const newIndex = currentIndex === slides.length - 1 ? 0 : currentIndex + 1;
+      showSlide(newIndex);
+    });
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        showSlide(Number(dot.dataset.index));
+      });
+    });
+  });
+</script>
+</body>
+</html>
