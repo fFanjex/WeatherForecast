@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>WeatherForecast • Поиск</title>
-    <link rel="stylesheet" href="/weather.css">
+    <link rel="stylesheet" href="/css/weather.css">
 </head>
 <body>
 <div class="bg"></div>
@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <form th:action="@{/logout}" method="post" class="logout-form">
+        <form id="logout-form" class="logout-form">
             <button type="submit" class="chip danger">
                 <span class="chip-ico">🚪</span>
                 <span>Выйти</span>
@@ -148,6 +148,7 @@
         const input = document.getElementById('city-input');
         const clearBtn = document.getElementById('clear-btn');
         const hint = document.getElementById('input-hint');
+        const logoutForm = document.getElementById('logout-form');
 
         const sync = () => {
             const has = input.value.trim().length > 0;
@@ -160,6 +161,23 @@
             input.value = '';
             sync();
             input.focus();
+        });
+
+        logoutForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            try {
+                await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'same-origin'
+                });
+            } catch (error) {
+                console.error('Ошибка при выходе:', error);
+            } finally {
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                window.location.href = '/login';
+            }
         });
 
         sync();
