@@ -1,5 +1,6 @@
 package ru.ffanjex.weatherforecast.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,16 +30,31 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) -> {
+                    String uri = request.getRequestURI();
+
+                    if (uri.startsWith("/api/")) {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.setContentType("application/json;charset=UTF-8");
+                        response.getWriter().write("{\"error\":\"Unauthorized\"}");
+                    } else {
+                        response.sendRedirect("/login");
+                    }
+                }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/**",
+                                "/",
                                 "/login",
                                 "/register",
+                                "/api/auth/**",
                                 "/login.css",
                                 "/register.css",
+                                "/home.css",
                                 "/images/**",
                                 "/css/**",
-                                "/js/**"
+                                "/js/**",
+                                "/static/**",
+                                "/webjars/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

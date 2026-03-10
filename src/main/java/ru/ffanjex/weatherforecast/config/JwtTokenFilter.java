@@ -2,6 +2,7 @@ package ru.ffanjex.weatherforecast.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        if (path.startsWith("/api/auth/")
+        if (path.equals("/")
                 || path.equals("/login")
                 || path.equals("/register")
+                || path.startsWith("/api/auth/")
                 || path.startsWith("/images/")
                 || path.startsWith("/css/")
                 || path.startsWith("/js/")
@@ -37,31 +39,36 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 || path.endsWith(".png")
                 || path.endsWith(".jpg")
                 || path.endsWith(".jpeg")
-                || path.endsWith(".webp")
-                || path.endsWith(".svg")) {
+                || path.endsWith(".svg")
+                || path.endsWith(".webp")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String token = resolveToken(request);
 
-        if (header == null || !header.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
+        if (token != null && jwtTokenProvider.isValidToken(token)) {
+            var authentication = jwtTokenProvider.getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
-        String token = header.substring(7);
-
-        if (!jwtTokenProvider.isValidToken(token)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("text/plain;charset=UTF-8");
-            response.getWriter().write("Invalid or expired token");
-            return;
-        }
-
-        var authentication = jwtTokenProvider.getAuthentication(token);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         filterChain.doFilter(request, response);
+    }
+
+    private String resolveToken(HttpServletRequest request) {
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
+        }
+
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("ACCESS_TOKEN".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        return null;
     }
 }

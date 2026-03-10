@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>WeatherForecast • Home</title>
 
-    <link rel="stylesheet" href="/home.css" />
+    <link rel="stylesheet" href="/css/home.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@7.5.2/ol.css">
     <script src="https://cdn.jsdelivr.net/npm/ol@7.5.2/dist/ol.js"></script>
 </head>
@@ -23,7 +23,7 @@
             </div>
         </div>
 
-        <form id="logout" action="/logout" method="post">
+        <form id="logout" novalidate>
             <button class="logout-btn" type="submit" aria-label="Выйти">
                 <span class="logout-ico" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none">
@@ -169,6 +169,8 @@
 </footer>
 
 <script>
+    const token = localStorage.getItem('accessToken');
+
     const mapStatus = document.getElementById('map-status');
     const defaultLon = 37.618423;
     const defaultLat = 55.751244;
@@ -215,7 +217,9 @@
                 "Accept": "application/json"
             }
         });
+
         if (!r.ok) throw new Error('Nominatim search error');
+
         const arr = await r.json();
         if (!Array.isArray(arr) || arr.length === 0) return null;
 
@@ -225,15 +229,33 @@
             displayName: arr[0].display_name
         };
     }
-    fetch('/api/home')
+
+    fetch('/api/home', {
+        method: 'GET',
+        headers: token ? {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+        } : {
+            'Content-Type': 'application/json'
+        }
+    })
         .then(r => {
-            if (!r.ok) {
+            if (r.status === 401 || r.status === 403) {
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
                 window.location.href = '/login';
-                return;
+                return null;
             }
+
+            if (!r.ok) {
+                throw new Error('Ошибка загрузки профиля');
+            }
+
             return r.json();
         })
         .then(async (data) => {
+            if (!data) return;
+
             document.getElementById('user-id').textContent = data.username || 'Неизвестно';
 
             const cityEl = document.getElementById('city-name');
@@ -241,6 +263,7 @@
 
             const savedCity = (data.savedCity || '').trim();
             cityEl.textContent = savedCity || 'не выбрано';
+
             if (!savedCity) {
                 mapStatus.textContent = 'Город не выбран — показана Москва';
                 setPoint(defaultLat, defaultLon, 10);
@@ -265,7 +288,9 @@
                 setPoint(defaultLat, defaultLon, 10);
             }
         })
-        .catch(() => {
+        .catch((e) => {
+            console.error(e);
+
             const cityEl = document.getElementById('city-name');
             cityEl.classList.remove('skeleton');
             cityEl.textContent = 'Ошибка загрузки';
@@ -273,6 +298,22 @@
             mapStatus.textContent = 'Ошибка — показана Москва';
             setPoint(defaultLat, defaultLon, 10);
         });
+
+    document.getElementById('logout').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        try {
+            await fetch('/api/auth/logout', {
+                method: 'POST'
+            });
+        } catch (e) {
+            console.error(e);
+        }
+
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/login';
+    });
 </script>
 </body>
 </html>

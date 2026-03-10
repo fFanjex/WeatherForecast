@@ -18,11 +18,17 @@ import java.util.Optional;
 @RequestMapping("/api")
 @AllArgsConstructor
 public class MainRestController {
+
     private final UserService userService;
 
     @GetMapping("/home")
     public ResponseEntity<?> getUserData() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body("User not authenticated");
+        }
+
         String username = authentication.getName();
 
         Optional<User> optionalUser = userService.findByUsername(username);

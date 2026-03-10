@@ -1,5 +1,7 @@
 package ru.ffanjex.weatherforecast.controller.rest;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,7 +40,7 @@ public class AuthRestController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -54,6 +56,38 @@ public class AuthRestController {
         String accessToken = jwtTokenProvider.generateAccessToken(user);
         String refreshToken = jwtTokenProvider.generateRefreshToken(user);
 
+        Cookie accessCookie = new Cookie("ACCESS_TOKEN", accessToken);
+        accessCookie.setHttpOnly(true);
+        accessCookie.setSecure(false);
+        accessCookie.setPath("/");
+        accessCookie.setMaxAge(60 * 60);
+        response.addCookie(accessCookie);
+
+        Cookie refreshCookie = new Cookie("REFRESH_TOKEN", refreshToken);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(false);
+        refreshCookie.setPath("/");
+        refreshCookie.setMaxAge(7 * 24 * 60 * 60);
+        response.addCookie(refreshCookie);
+
         return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        Cookie accessCookie = new Cookie("ACCESS_TOKEN", "");
+        accessCookie.setHttpOnly(true);
+        accessCookie.setPath("/");
+        accessCookie.setMaxAge(0);
+        response.addCookie(accessCookie);
+
+        Cookie refreshCookie = new Cookie("REFRESH_TOKEN", "");
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(false);
+        refreshCookie.setPath("/");
+        refreshCookie.setMaxAge(0);
+        response.addCookie(refreshCookie);
+
+        return ResponseEntity.ok("Logged out successfully");
     }
 }

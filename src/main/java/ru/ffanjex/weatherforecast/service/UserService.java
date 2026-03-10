@@ -15,12 +15,17 @@ import java.util.Set;
 @Service
 @AllArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final AdviceRepository adviceRepository;
     private final PasswordEncoder passwordEncoder;
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public User save(User user) {
@@ -30,6 +35,10 @@ public class UserService {
     public void registerUser(String username, String email, String password, Sex sex) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new IllegalArgumentException("Пользователь уже зарегистрирован");
+        }
+
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException("Email уже используется");
         }
 
         User user = User.builder()
