@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Вход • WeatherForecast</title>
-    <link rel="stylesheet" href="/login.css" />
+    <link rel="stylesheet" href="/css/login.css" />
 </head>
 <body>
 <div class="bg"></div>
@@ -27,7 +27,7 @@
             <p class="subtitle">Введите данные, чтобы продолжить.</p>
         </div>
 
-        <form id="login-form" action="/login" method="post" novalidate>
+        <form id="login-form" novalidate>
             <div class="field">
                 <label for="username">Имя пользователя</label>
                 <div class="control">
@@ -107,7 +107,9 @@
         msg.className = 'msg';
     });
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
         const inputs = Array.from(form.querySelectorAll('input'));
         let valid = true;
 
@@ -116,11 +118,40 @@
         });
 
         if (!valid) {
-            e.preventDefault();
             msg.className = 'msg error';
             msg.textContent = 'Пожалуйста, заполните все поля правильно.';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Неверный логин или пароль');
+            }
+
+            const data = await response.json();
+
+            localStorage.setItem('accessToken', data.accessToken);
+            localStorage.setItem('refreshToken', data.refreshToken);
+
+            window.location.href = '/home';
+
+        } catch (err) {
+            msg.className = 'msg error';
+            msg.textContent = err.message;
         }
     });
 </script>
+
 </body>
 </html>
