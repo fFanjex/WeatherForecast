@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 import ru.ffanjex.weatherforecast.dto.enums.Sex;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @Entity
@@ -15,9 +17,10 @@ import ru.ffanjex.weatherforecast.dto.enums.Sex;
 public class ClothesExample {
 
     @Id
+    @GeneratedValue
     @UuidGenerator
-    @Column(name = "id", nullable = false)
-    private String id;
+    @Column(name = "id", nullable = false, updatable = false)
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "sex", nullable = false)
@@ -25,6 +28,9 @@ public class ClothesExample {
 
     @Column(name = "season", nullable = false)
     private String season;
+
+    @Column(name = "item_type", nullable = false)
+    private String itemType;
 
     @Column(name = "style")
     private String style;
