@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import ru.ffanjex.weatherforecast.dto.AdviceResponseDto;
 import ru.ffanjex.weatherforecast.model.Advice;
 import ru.ffanjex.weatherforecast.model.WeatherResponse;
 import ru.ffanjex.weatherforecast.service.AdviceService;
@@ -18,7 +19,7 @@ public class AdviceRestController {
     private final WeatherService weatherService;
 
     @GetMapping("/generate")
-    public ResponseEntity<String> generate(@RequestParam String city) {
+    public ResponseEntity<AdviceResponseDto> generate(@RequestParam String city) {
         WeatherResponse wr = weatherService.getWeather(city);
         AdviceService.WeatherContext ctx = adviceService.fromWeatherResponse(wr);
         return ResponseEntity.ok(adviceService.generateAdvice(ctx));

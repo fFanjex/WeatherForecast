@@ -5,17 +5,24 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.ffanjex.weatherforecast.dto.AdviceResponseDto;
 import ru.ffanjex.weatherforecast.model.Advice;
 import ru.ffanjex.weatherforecast.model.User;
 import ru.ffanjex.weatherforecast.model.WeatherResponse;
 import ru.ffanjex.weatherforecast.repository.AdviceRepository;
 import ru.ffanjex.weatherforecast.repository.UserRepository;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +49,7 @@ public class AdviceService {
             Integer visibilityMeters
     ) {}
 
-    public String generateAdvice(WeatherContext w) {
+    public AdviceResponseDto generateAdvice(WeatherContext w) {
         try {
             String prompt = buildPrompt(w);
 
@@ -52,13 +59,16 @@ public class AdviceService {
                             .put(new JSONObject()
                                     .put("role", "system")
                                     .put("content",
-                                            "Отвечай по-русски. Дай максимально практичный совет по одежде. " +
-                                                    "Без воды, без общих фраз. Соблюдай формат. Не упоминай, что ты ИИ."))
+                                            "Ты создаёшь ответ только в виде валидного JSON. " +
+                                                    "Без markdown, без пояснений, без ```." +
+                                                    "Поле adviceText — обычный человекочитаемый текст на русском языке. " +
+                                                    "Поле shortClothingDescription — короткая строка со списком вещей на русском через запятую. " +
+                                                    "Поле imagePrompt — короткий общий prompt на английском для стиля одежды."))
                             .put(new JSONObject()
                                     .put("role", "user")
                                     .put("content", prompt)))
-                    .put("max_tokens", 800)
-                    .put("temperature", 0.4);
+                    .put("max_tokens", 1600)
+                    .put("temperature", 0.5);
 
             HttpURLConnection connection = (HttpURLConnection) new URL(OPENAI_URL).openConnection();
             connection.setRequestMethod("POST");
@@ -73,14 +83,19 @@ public class AdviceService {
 
             int code = connection.getResponseCode();
             String responseText = readResponse(code < 400 ? connection.getInputStream() : connection.getErrorStream());
+
             if (code >= 400) {
-                return "Ошибка OpenAI: HTTP " + code + " — " + extractErrorMessage(responseText);
+                return new AdviceResponseDto(
+                        "Ошибка OpenAI: HTTP " + code + " — " + extractErrorMessage(responseText),
+                        "",
+                        ""
+                );
             }
 
             JSONObject json = new JSONObject(responseText);
             JSONArray choices = json.optJSONArray("choices");
             if (choices == null || choices.isEmpty()) {
-                return "Ошибка: пустой ответ от модели.";
+                return new AdviceResponseDto("Ошибка: пустой ответ от модели.", "", "");
             }
 
             String content = choices.getJSONObject(0)
@@ -88,15 +103,28 @@ public class AdviceService {
                     .optString("content", "")
                     .trim();
 
-            if (content.isEmpty()) return "Ошибка: модель вернула пустой текст.";
-            return content;
+            if (content.isEmpty()) {
+                return new AdviceResponseDto("Ошибка: модель вернула пустой текст.", "", "");
+            }
+
+            JSONObject result = extractJsonObject(content);
+
+            String adviceText = normalizeAdviceText(result.optString("adviceText", ""));
+            String shortClothingDescription = result.optString("shortClothingDescription", "").trim();
+            String imagePrompt = result.optString("imagePrompt", "").trim();
+
+            if (adviceText.isBlank()) {
+                adviceText = "Ошибка: модель не вернула adviceText.";
+            }
+
+            return new AdviceResponseDto(adviceText, shortClothingDescription, imagePrompt);
 
         } catch (Exception e) {
-            return "Ошибка: " + e.getMessage();
+            return new AdviceResponseDto("Ошибка: " + e.getMessage(), "", "");
         }
     }
 
-    public String generateAdvice(double temperature, double humidity, double windSpeed) {
+    public AdviceResponseDto generateAdvice(double temperature, double humidity, double windSpeed) {
         WeatherContext ctx = new WeatherContext(
                 temperature,
                 temperature,
@@ -120,7 +148,9 @@ public class AdviceService {
 
     public boolean attachAdviceToUser(String username, Advice advice) {
         Optional<User> userOpt = userRepository.findByUsername(username);
-        if (userOpt.isEmpty()) return false;
+        if (userOpt.isEmpty()) {
+            return false;
+        }
 
         User user = userOpt.get();
         user.getAdviceList().add(advice);
@@ -128,7 +158,7 @@ public class AdviceService {
         return true;
     }
 
-    public List<Advice> getUserAdvices(String username) {
+    public ArrayList<Advice> getUserAdvices(String username) {
         return userRepository.findByUsername(username)
                 .map(User::getAdviceList)
                 .map(ArrayList::new)
@@ -142,40 +172,150 @@ public class AdviceService {
         String gust = (w.windGust == null) ? "нет данных" : String.format(Locale.US, "%.1f", w.windGust);
         String rain = (w.rain1h == null) ? "0" : String.format(Locale.US, "%.2f", w.rain1h);
         String snow = (w.snow1h == null) ? "0" : String.format(Locale.US, "%.2f", w.snow1h);
-        String vis  = (w.visibilityMeters == null) ? "нет данных" : (w.visibilityMeters + " м");
+        String vis = (w.visibilityMeters == null) ? "нет данных" : (w.visibilityMeters + " м");
 
         return String.format(Locale.US,
-                "Ты опытный стилист и метеоконсультант. Дай подробный, максимально практичный совет по одежде для улицы.\n" +
-                        "Данные:\n" +
-                        "Температура %.1f°C (ощущается %.1f°C), влажность %.0f%%, ветер %.1f м/с (порывы %s), осадки за 1ч: дождь %s мм, снег %s мм, видимость %s, погода: %s (код %s).\n\n" +
-                        "Требования:\n" +
-                        "1) Пиши конкретно: материалы и слои (например: термобельё/флис/пуховик/мембрана), без общих фраз.\n" +
-                        "2) Учитывай «ощущается как», порывы и осадки: если осадки >0, добавь непромокаемость/капюшон/зонт и подходящую обувь.\n" +
-                        "3) Если ветер >=6 м/с или порывы >=9 м/с, добавь защиту шеи/лица.\n" +
-                        "4) Если влажность >=85%% при минусе, учти сырость и предложи слой, который не намокает.\n" +
-                        "5) Дай 2 варианта: «Если прогулка 15–30 минут» и «Если на улице 1–2 часа».\n\n" +
-                        "Формат строго:\n" +
-                        "Коротко:\n" +
-                        "- Прогулка 15–30 мин: ...\n" +
-                        "- На 1–2 часа: ...\n" +
-                        "Детально по пунктам:\n" +
-                        "Верх: ...\n" +
-                        "Низ: ...\n" +
-                        "Обувь: ...\n" +
-                        "Аксессуары: ...\n" +
-                        "Чего избегать: ...\n" +
-                        "Почему: 1–2 фразы.\n" +
-                        "Объём: 600–900 символов.",
+                """
+                Ты опытный стилист и метеоконсультант.
+
+                Верни строго один JSON-объект такого вида:
+                {
+                  "adviceText": "string",
+                  "shortClothingDescription": "string",
+                  "imagePrompt": "string"
+                }
+
+                ВАЖНО:
+                1) Снаружи ответ должен быть JSON.
+                2) Поле adviceText должно быть ОБЫЧНЫМ ЧЕЛОВЕЧЕСКИМ ТЕКСТОМ на русском языке.
+                3) adviceText не должен быть JSON, объектом, массивом или набором ключей и значений.
+                4) Внутри adviceText используй переносы строк \\n.
+                5) adviceText должен быть развёрнутым, полезным и понятным.
+
+                Формат adviceText строго такой:
+                Коротко:
+                - Прогулка 15–30 мин: ...
+                - На 1–2 часа: ...
+
+                Детально по пунктам:
+                Верх: ...
+                Низ: ...
+                Обувь: ...
+                Аксессуары: ...
+                Чего избегать: ...
+                Почему: ...
+
+                Требования к adviceText:
+                - пиши по-русски;
+                - дай подробный и практичный совет;
+                - объём примерно 900–1300 символов;
+                - учитывай ощущаемую температуру, влажность, ветер, порывы и осадки;
+                - отдельно уточняй, что лучше для короткой прогулки и что лучше для долгого пребывания на улице.
+
+                Требования к shortClothingDescription:
+                - одна короткая строка на русском;
+                - только предметы одежды и аксессуары через запятую;
+                - без пояснений.
+
+                Требования к imagePrompt:
+                - одна короткая строка на английском;
+                - это общий стиль образа;
+                - без погоды, температуры и объяснений.
+
+                Погода:
+                Температура %.1f°C (ощущается %.1f°C), влажность %.0f%%, ветер %.1f м/с (порывы %s), осадки за 1ч: дождь %s мм, снег %s мм, видимость %s, погода: %s (код %s).
+                """,
                 w.temp, w.feelsLike, w.humidity, w.windSpeed, gust, rain, snow, vis, desc, wid
         );
     }
 
+    private String normalizeAdviceText(String adviceText) {
+        if (adviceText == null || adviceText.isBlank()) {
+            return "";
+        }
+
+        String trimmed = adviceText.trim();
+
+        if (!trimmed.startsWith("{")) {
+            return trimmed;
+        }
+
+        try {
+            JSONObject obj = new JSONObject(trimmed);
+            StringBuilder sb = new StringBuilder();
+
+            JSONObject shortObj = obj.optJSONObject("Коротко");
+            if (shortObj != null) {
+                sb.append("Коротко:\n");
+
+                String shortWalk = shortObj.optString("Прогулка 15–30 мин",
+                        shortObj.optString("Прогулка 15-30 мин", ""));
+                String longWalk = shortObj.optString("На 1–2 часа",
+                        shortObj.optString("На 1-2 часа", ""));
+
+                if (!shortWalk.isBlank()) {
+                    sb.append("- Прогулка 15–30 мин: ").append(shortWalk).append("\n");
+                }
+                if (!longWalk.isBlank()) {
+                    sb.append("- На 1–2 часа: ").append(longWalk).append("\n");
+                }
+                sb.append("\n");
+            }
+
+            JSONObject details = obj.optJSONObject("Детально по пунктам");
+            if (details != null) {
+                sb.append("Детально по пунктам:\n");
+
+                String upper = details.optString("Верх", "");
+                String lower = details.optString("Низ", "");
+                String shoes = details.optString("Обувь", "");
+                String accessories = details.optString("Аксессуары", "");
+                String avoid = details.optString("Чего избегать", "");
+                String why = details.optString("Почему", "");
+
+                if (!upper.isBlank()) sb.append("Верх: ").append(upper).append("\n");
+                if (!lower.isBlank()) sb.append("Низ: ").append(lower).append("\n");
+                if (!shoes.isBlank()) sb.append("Обувь: ").append(shoes).append("\n");
+                if (!accessories.isBlank()) sb.append("Аксессуары: ").append(accessories).append("\n");
+                if (!avoid.isBlank()) sb.append("Чего избегать: ").append(avoid).append("\n");
+                if (!why.isBlank()) sb.append("Почему: ").append(why).append("\n");
+            }
+
+            String result = sb.toString().trim();
+            return result.isBlank() ? trimmed : result;
+
+        } catch (Exception e) {
+            return trimmed;
+        }
+    }
+
+    private JSONObject extractJsonObject(String content) {
+        String trimmed = content.trim();
+
+        if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
+            return new JSONObject(trimmed);
+        }
+
+        int start = trimmed.indexOf('{');
+        int end = trimmed.lastIndexOf('}');
+        if (start >= 0 && end > start) {
+            return new JSONObject(trimmed.substring(start, end + 1));
+        }
+
+        throw new RuntimeException("Не удалось извлечь JSON из ответа модели");
+    }
+
     private String readResponse(InputStream is) throws IOException {
-        if (is == null) return "";
+        if (is == null) {
+            return "";
+        }
+
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             StringBuilder sb = new StringBuilder();
             String line;
-            while ((line = reader.readLine()) != null) sb.append(line);
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
             return sb.toString();
         }
     }
@@ -208,11 +348,17 @@ public class AdviceService {
 
         Double rain1h = null;
         Double snow1h = null;
-        if (wr.getRain() != null) rain1h = wr.getRain().get1h();
-        if (wr.getSnow() != null) snow1h = wr.getSnow().get1h();
+        if (wr.getRain() != null) {
+            rain1h = wr.getRain().get1h();
+        }
+        if (wr.getSnow() != null) {
+            snow1h = wr.getSnow().get1h();
+        }
 
         Double gust = null;
-        if (wr.getWind() != null) gust = wr.getWind().getGust();
+        if (wr.getWind() != null) {
+            gust = wr.getWind().getGust();
+        }
 
         Integer visibility = wr.getVisibility();
 

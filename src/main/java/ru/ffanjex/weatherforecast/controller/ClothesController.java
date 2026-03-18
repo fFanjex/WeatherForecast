@@ -10,7 +10,7 @@ public class ClothesController {
 
     @GetMapping("/example-clothes")
     public String exampleClothes(@RequestParam(required = false, defaultValue = "Здесь будет совет по одежде") String advice,
-            Model model) {
+                                 Model model) {
         model.addAttribute("advice", advice);
         return "example-clothes";
     }
