@@ -280,6 +280,30 @@ body{
     word-wrap:break-word;
 }
 
+.advice-meta{
+    margin-top:14px;
+    padding:14px 16px;
+    border-radius:16px;
+    background:rgba(255,255,255,.68);
+    border:1px solid rgba(15,23,42,.10);
+    position:relative;
+    z-index:1;
+}
+
+.meta-label{
+    font-size:.9rem;
+    font-weight:800;
+    color:rgba(14,20,32,.72);
+    margin-bottom:8px;
+}
+
+.meta-value{
+    color:rgba(14,20,32,.9);
+    font-weight:700;
+    line-height:1.5;
+    word-break:break-word;
+}
+
 .advice-actions{
     margin-top:14px;
     position:relative;
@@ -359,6 +383,60 @@ body{
     line-height:1.55;
 }
 
+.generated-card{
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.generated-image-wrap{
+    flex:1;
+    min-height:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:20px;
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(15,23,42,.08);
+    overflow:hidden;
+    padding:18px;
+}
+
+.generated-image{
+    width:100%;
+    height:100%;
+    max-height:340px;
+    object-fit:contain;
+    display:block;
+    border-radius:16px;
+}
+
+.generated-info{
+    padding:14px 16px;
+    border-radius:18px;
+    background:rgba(255,255,255,.78);
+    border:1px solid rgba(15,23,42,.08);
+}
+
+.generated-title{
+    font-size:1.15rem;
+    font-weight:900;
+    color:rgba(14,20,32,.92);
+    line-height:1.35;
+}
+
+.generated-prompt{
+    margin-top:8px;
+    font-size:.84rem;
+    line-height:1.5;
+    color:rgba(14,20,32,.58);
+    word-break:break-word;
+    max-height:72px;
+    overflow:auto;
+}
+
 .nav-btn{
     width:56px;
     height:56px;
@@ -394,6 +472,7 @@ body{
     display:flex;
     align-items:center;
     gap:10px;
+    flex-wrap:wrap;
 }
 
 .dot{
@@ -409,6 +488,15 @@ body{
 .dot.active{
     background:linear-gradient(135deg,var(--primary),var(--primary-2));
     transform:scale(1.15);
+}
+
+.gallery-status{
+    margin-top:12px;
+    font-size:.95rem;
+    font-weight:700;
+    color:rgba(14,20,32,.68);
+    position:relative;
+    z-index:1;
 }
 
 .btn{
@@ -474,7 +562,7 @@ body{
     }
 
     .slider-stage{
-        min-height:380px;
+        min-height:420px;
     }
 }
 
@@ -489,7 +577,7 @@ body{
     }
 
     .slider-stage{
-        min-height:320px;
+        min-height:360px;
     }
 
     .slider-footer{

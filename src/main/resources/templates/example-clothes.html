@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,10 +12,10 @@
 
 <header class="header">
   <div class="container header-inner">
-    <a href="/council-advice" class="chip">
+    <button type="button" id="back-btn-top" class="chip">
       <span class="chip-ico">⬅️</span>
       <span>Назад</span>
-    </a>
+    </button>
 
     <div class="brand">
       <div class="logo" aria-hidden="true">WF</div>
@@ -28,7 +28,7 @@
       </div>
     </div>
 
-    <form th:action="@{/logout}" method="post" class="logout-form">
+    <form action="/logout" method="post" class="logout-form">
       <button type="submit" class="chip danger">
         <span class="chip-ico">🚪</span>
         <span>Выйти</span>
@@ -44,19 +44,24 @@
         <div class="badge">🥼 Advice</div>
         <div>
           <h1 class="section-title">Ваш совет по одежде</h1>
-          <p class="section-subtitle">Слева отображается текст совета, на основе которого будут подбираться образы.</p>
+          <p class="section-subtitle">Слева отображается текст совета, на основе которого подбираются примеры вещей.</p>
         </div>
       </div>
 
       <div class="advice-box">
-        <p class="advice-text" th:text="${advice}">Здесь будет совет по одежде</p>
+        <p class="advice-text" id="advice-text">Здесь будет совет по одежде</p>
+      </div>
+
+      <div class="advice-meta">
+        <div class="meta-label">Список вещей для генерации:</div>
+        <div class="meta-value" id="short-clothes-text">Список вещей появится здесь</div>
       </div>
 
       <div class="advice-actions">
-        <a href="/council-advice" class="btn ghost">
+        <button type="button" id="back-btn-bottom" class="btn ghost">
           <span class="btn-ico">⬅️</span>
           <span>Вернуться к совету</span>
-        </a>
+        </button>
       </div>
     </section>
 
@@ -65,7 +70,7 @@
         <div class="badge alt">👕 Looks</div>
         <div>
           <h2 class="section-title">Примеры одежды</h2>
-          <p class="section-subtitle">Здесь будут отображаться изображения одежды и готовых образов.</p>
+          <p class="section-subtitle">Каждая картинка показывает отдельную вещь из совета.</p>
         </div>
       </div>
 
@@ -74,28 +79,12 @@
           <span>❮</span>
         </button>
 
-        <div class="slider-stage">
+        <div class="slider-stage" id="slider-stage">
           <div class="slide active">
             <div class="placeholder">
-              <div class="placeholder-icon">🧥</div>
-              <div class="placeholder-title">Будущий образ №1</div>
-              <div class="placeholder-text">Здесь появится первая картинка одежды</div>
-            </div>
-          </div>
-
-          <div class="slide">
-            <div class="placeholder">
-              <div class="placeholder-icon">👟</div>
-              <div class="placeholder-title">Будущий образ №2</div>
-              <div class="placeholder-text">Здесь появится вторая картинка одежды</div>
-            </div>
-          </div>
-
-          <div class="slide">
-            <div class="placeholder">
-              <div class="placeholder-icon">🧣</div>
-              <div class="placeholder-title">Будущий образ №3</div>
-              <div class="placeholder-text">Здесь появится третья картинка одежды</div>
+              <div class="placeholder-icon">⏳</div>
+              <div class="placeholder-title">Загрузка</div>
+              <div class="placeholder-text">Генерируем изображения одежды...</div>
             </div>
           </div>
         </div>
@@ -106,17 +95,15 @@
       </div>
 
       <div class="slider-footer">
-        <div class="dots" id="slider-dots">
-          <button class="dot active" type="button" data-index="0" aria-label="Слайд 1"></button>
-          <button class="dot" type="button" data-index="1" aria-label="Слайд 2"></button>
-          <button class="dot" type="button" data-index="2" aria-label="Слайд 3"></button>
-        </div>
+        <div class="dots" id="slider-dots"></div>
 
-        <a href="/example-clothes" class="btn primary">
+        <button type="button" class="btn primary" id="reload-images">
           <span class="btn-ico">✨</span>
           <span>Обновить примеры</span>
-        </a>
+        </button>
       </div>
+
+      <div class="gallery-status" id="gallery-status"></div>
     </section>
   </div>
 </main>
@@ -129,21 +116,46 @@
 </footer>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  const adviceText = sessionStorage.getItem('exampleAdvice') || '';
+  const shortClothingDescription = sessionStorage.getItem('exampleShortClothingDescription') || '';
+
+  document.addEventListener('DOMContentLoaded', async () => {
     const titleSpans = document.querySelectorAll('#animated-title span');
     titleSpans.forEach((span, idx) => {
       span.style.opacity = '0';
       span.style.transition = 'opacity 0.4s ease';
-      setTimeout(() => span.style.opacity = '1', idx * 70);
+      setTimeout(() => {
+        span.style.opacity = '1';
+      }, idx * 70);
     });
 
-    const slides = document.querySelectorAll('.slide');
-    const dots = document.querySelectorAll('.dot');
+    document.getElementById('advice-text').textContent =
+            adviceText || 'Совет по одежде не найден';
+
+    document.getElementById('short-clothes-text').textContent =
+            shortClothingDescription || 'Список вещей не найден';
+
+    const sliderStage = document.getElementById('slider-stage');
+    const dotsContainer = document.getElementById('slider-dots');
     const prevBtn = document.getElementById('prev-slide');
     const nextBtn = document.getElementById('next-slide');
+    const reloadBtn = document.getElementById('reload-images');
+    const galleryStatus = document.getElementById('gallery-status');
+    const backBtnTop = document.getElementById('back-btn-top');
+    const backBtnBottom = document.getElementById('back-btn-bottom');
+
+    let slides = [];
+    let dots = [];
     let currentIndex = 0;
 
+    function refreshCollections() {
+      slides = Array.from(document.querySelectorAll('.slide'));
+      dots = Array.from(document.querySelectorAll('.dot'));
+    }
+
     function showSlide(index) {
+      if (!slides.length || !dots.length) return;
+
       slides.forEach(slide => slide.classList.remove('active'));
       dots.forEach(dot => dot.classList.remove('active'));
 
@@ -152,21 +164,173 @@
       currentIndex = index;
     }
 
+    function renderError(message) {
+      sliderStage.innerHTML = `
+        <div class="slide active">
+          <div class="placeholder">
+            <div class="placeholder-icon">❌</div>
+            <div class="placeholder-title">Ошибка</div>
+            <div class="placeholder-text">${message}</div>
+          </div>
+        </div>
+      `;
+      dotsContainer.innerHTML = '';
+      galleryStatus.textContent = '';
+      refreshCollections();
+    }
+
+    function renderEmpty() {
+      sliderStage.innerHTML = `
+        <div class="slide active">
+          <div class="placeholder">
+            <div class="placeholder-icon">⚠️</div>
+            <div class="placeholder-title">Нет изображений</div>
+            <div class="placeholder-text">Сервис не вернул ни одной картинки</div>
+          </div>
+        </div>
+      `;
+      dotsContainer.innerHTML = '';
+      galleryStatus.textContent = '';
+      refreshCollections();
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+              .replaceAll('&', '&amp;')
+              .replaceAll('<', '&lt;')
+              .replaceAll('>', '&gt;')
+              .replaceAll('"', '&quot;')
+              .replaceAll("'", '&#39;');
+    }
+
+    function renderSlides(items) {
+      if (!items || items.length === 0) {
+        renderEmpty();
+        return;
+      }
+
+      sliderStage.innerHTML = '';
+      dotsContainer.innerHTML = '';
+
+      items.forEach((item, index) => {
+        const clothingItem = escapeHtml(item.clothingItem || 'Без названия');
+        const image = item.image || '';
+
+        const slide = document.createElement('div');
+        slide.className = 'slide' + (index === 0 ? ' active' : '');
+
+        if (image) {
+          slide.innerHTML = `
+            <div class="generated-card">
+              <div class="generated-image-wrap">
+                <img class="generated-image" src="${image}" alt="${clothingItem}">
+              </div>
+              <div class="generated-info">
+                <div class="generated-title">${clothingItem}</div>
+              </div>
+            </div>
+          `;
+        } else {
+          slide.innerHTML = `
+            <div class="placeholder">
+              <div class="placeholder-icon">⚠️</div>
+              <div class="placeholder-title">${clothingItem}</div>
+              <div class="placeholder-text">Для этого элемента изображение не было получено.</div>
+            </div>
+          `;
+        }
+
+        sliderStage.appendChild(slide);
+
+        const dot = document.createElement('button');
+        dot.className = 'dot' + (index === 0 ? ' active' : '');
+        dot.type = 'button';
+        dot.dataset.index = String(index);
+        dot.setAttribute('aria-label', 'Слайд ' + (index + 1));
+        dot.addEventListener('click', () => showSlide(index));
+        dotsContainer.appendChild(dot);
+      });
+
+      galleryStatus.textContent = `Сгенерировано изображений: ${items.length}`;
+      refreshCollections();
+      currentIndex = 0;
+    }
+
+    async function loadImages() {
+      try {
+        if (!shortClothingDescription || !shortClothingDescription.trim()) {
+          renderError('Не передан список одежды для генерации.');
+          return;
+        }
+
+        galleryStatus.textContent = 'Идёт генерация изображений...';
+
+        sliderStage.innerHTML = `
+          <div class="slide active">
+            <div class="placeholder">
+              <div class="placeholder-icon">⏳</div>
+              <div class="placeholder-title">Загрузка</div>
+              <div class="placeholder-text">Генерируем изображения одежды...</div>
+            </div>
+          </div>
+        `;
+        dotsContainer.innerHTML = '';
+        refreshCollections();
+
+        const token = localStorage.getItem('accessToken');
+
+        if (!token) {
+          renderError('Не найден accessToken в localStorage. Сначала выполните вход.');
+          return;
+        }
+
+        const response = await fetch('/api/advice/generate-images', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            shortClothingDescription: shortClothingDescription
+          })
+        });
+
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(`Ошибка ${response.status}: ${text}`);
+        }
+
+        const data = await response.json();
+        renderSlides(data.items || []);
+      } catch (e) {
+        renderError(e.message || 'Не удалось загрузить изображения');
+      }
+    }
+
     prevBtn.addEventListener('click', () => {
+      if (!slides.length) return;
       const newIndex = currentIndex === 0 ? slides.length - 1 : currentIndex - 1;
       showSlide(newIndex);
     });
 
     nextBtn.addEventListener('click', () => {
+      if (!slides.length) return;
       const newIndex = currentIndex === slides.length - 1 ? 0 : currentIndex + 1;
       showSlide(newIndex);
     });
 
-    dots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        showSlide(Number(dot.dataset.index));
-      });
+    reloadBtn.addEventListener('click', loadImages);
+
+    backBtnTop.addEventListener('click', () => {
+      window.history.back();
     });
+
+    backBtnBottom.addEventListener('click', () => {
+      window.history.back();
+    });
+
+    await loadImages();
   });
 </script>
 </body>
