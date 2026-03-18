@@ -1,3 +1,28 @@
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+CREATE TABLE IF NOT EXISTS facts (
+                                     id SERIAL PRIMARY KEY,
+                                     text TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS clothes_example (
+                                               id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    sex VARCHAR(10) NOT NULL,
+    season VARCHAR(20) NOT NULL,
+    item_type VARCHAR(50) NOT NULL,
+    style VARCHAR(50),
+    image_url TEXT NOT NULL,
+    title VARCHAR(255)
+    );
+
+INSERT INTO clothes_example (sex, season, item_type, style, image_url, title) VALUES
+                                                                                  ('MALE', 'WINTER', 'PANTS', 'CASUAL', '/images/clothes/male/winter/pants1.jpg', 'Утепленные штаны'),
+                                                                                  ('MALE', 'WINTER', 'SOCKS', 'CASUAL', '/images/clothes/male/winter/socks1.jpg', 'Теплые носки'),
+                                                                                  ('MALE', 'WINTER', 'BOOTS', 'CASUAL', '/images/clothes/male/winter/boots1.jpg', 'Зимние ботинки'),
+                                                                                  ('MALE', 'WINTER', 'HAT', 'CASUAL', '/images/clothes/male/winter/hat1.jpg', 'Теплая шапка'),
+                                                                                  ('MALE', 'WINTER', 'SCARF', 'CASUAL', '/images/clothes/male/winter/scarf1.jpg', 'Шарф'),
+                                                                                  ('MALE', 'WINTER', 'GLOVES', 'CASUAL', '/images/clothes/male/winter/gloves1.jpg', 'Перчатки');
+
 CREATE TABLE IF NOT EXISTS facts (
                                      id SERIAL PRIMARY KEY,
                                      text TEXT NOT NULL

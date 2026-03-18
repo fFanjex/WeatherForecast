@@ -4,10 +4,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import ru.ffanjex.weatherforecast.dto.AdviceResponseDto;
+import ru.ffanjex.weatherforecast.dto.ClothingImageResponseDto;
+import ru.ffanjex.weatherforecast.dto.ClothingItemImageDto;
+import ru.ffanjex.weatherforecast.dto.GenerateImagesRequest;
 import ru.ffanjex.weatherforecast.model.Advice;
 import ru.ffanjex.weatherforecast.model.WeatherResponse;
 import ru.ffanjex.weatherforecast.service.AdviceService;
+import ru.ffanjex.weatherforecast.service.ClothingImageService;
 import ru.ffanjex.weatherforecast.service.WeatherService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/advice")
@@ -16,12 +23,20 @@ public class AdviceRestController {
 
     private final AdviceService adviceService;
     private final WeatherService weatherService;
+    private final ClothingImageService clothingImageService;
 
     @GetMapping("/generate")
-    public ResponseEntity<String> generate(@RequestParam String city) {
+    public ResponseEntity<AdviceResponseDto> generate(@RequestParam String city) {
         WeatherResponse wr = weatherService.getWeather(city);
         AdviceService.WeatherContext ctx = adviceService.fromWeatherResponse(wr);
         return ResponseEntity.ok(adviceService.generateAdvice(ctx));
+    }
+
+    @PostMapping("/generate-images")
+    public ResponseEntity<ClothingImageResponseDto> generateImages(@RequestBody GenerateImagesRequest request) {
+        List<ClothingItemImageDto> items =
+                clothingImageService.generateClothingImages(request.getShortClothingDescription());
+        return ResponseEntity.ok(new ClothingImageResponseDto(items));
     }
 
     @PostMapping("/save")

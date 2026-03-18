@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.ffanjex.weatherforecast.dto.AdviceResponseDto;
 import ru.ffanjex.weatherforecast.model.WeatherResponse;
 import ru.ffanjex.weatherforecast.service.AdviceService;
 import ru.ffanjex.weatherforecast.service.WeatherService;
@@ -24,11 +25,12 @@ public class AdviceController {
     public String showAdvicePage(@RequestParam String city, Model model) {
         WeatherResponse wr = weatherService.getWeather(city);
         AdviceService.WeatherContext ctx = adviceService.fromWeatherResponse(wr);
-
+        var adviceResponse = adviceService.generateAdvice(ctx);
         model.addAttribute("city", city);
-        model.addAttribute("advice", adviceService.generateAdvice(ctx));
+        model.addAttribute("advice", adviceResponse.getAdviceText());
+        model.addAttribute("shortClothingDescription", adviceResponse.getShortClothingDescription());
+        model.addAttribute("imagePrompt", adviceResponse.getImagePrompt());
         model.addAttribute("weather", wr);
-
         return "council-advice";
     }
 

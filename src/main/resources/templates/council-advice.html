@@ -64,10 +64,10 @@
                     <span>Сохранить совет</span>
                 </button>
 
-                <a href="/example-clothes" class="btn ghost">
+                <button id="show-example-btn" class="btn ghost" type="button">
                     <span class="btn-ico">👕</span>
                     <span>Показать пример одежды</span>
-                </a>
+                </button>
             </div>
 
             <div id="toast" class="toast" role="status" aria-live="polite">
@@ -135,6 +135,12 @@
     </div>
 </footer>
 
+<script th:inline="javascript">
+    const adviceTextValue = /*[[${advice}]]*/ '';
+    const shortClothingDescriptionValue = /*[[${shortClothingDescription}]]*/ '';
+    const imagePromptValue = /*[[${imagePrompt}]]*/ '';
+</script>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const titleSpans = document.querySelectorAll('#animated-title span');
@@ -149,12 +155,12 @@
     const toastTitle = document.getElementById('toast-title');
     const toastText = document.getElementById('toast-text');
 
-    const showToast = (title, text, ok=true) => {
+    const showToast = (title, text, ok = true) => {
         toastTitle.textContent = title;
         toastText.textContent = text;
         toast.classList.remove('show');
         toast.classList.remove('bad');
-        if(!ok) toast.classList.add('bad');
+        if (!ok) toast.classList.add('bad');
         requestAnimationFrame(() => toast.classList.add('show'));
         clearTimeout(window.__toastT);
         window.__toastT = setTimeout(() => toast.classList.remove('show'), 2600);
@@ -162,11 +168,13 @@
 
     $(document).ready(function() {
         $("#save-advice-btn").click(function() {
-            let adviceText = $(".advice-text").text();
+            const adviceText = $(".advice-text").text();
+            const token = localStorage.getItem('accessToken');
 
             $.ajax({
                 url: "/api/advice/save",
                 type: "POST",
+                headers: token ? { "Authorization": "Bearer " + token } : {},
                 data: { adviceText: adviceText },
                 success: function(response) {
                     showToast("Сохранено ✅", String(response || "Совет добавлен"));
@@ -175,6 +183,13 @@
                     showToast("Ошибка ❌", String(xhr.responseText || "Не удалось сохранить"), false);
                 }
             });
+        });
+
+        $("#show-example-btn").click(function() {
+            sessionStorage.setItem('exampleAdvice', adviceTextValue);
+            sessionStorage.setItem('exampleShortClothingDescription', shortClothingDescriptionValue);
+            sessionStorage.setItem('exampleImagePrompt', imagePromptValue);
+            window.location.href = '/example-clothes';
         });
     });
 </script>
