@@ -9,7 +9,9 @@ import ru.ffanjex.weatherforecast.dto.ClothingImageResponseDto;
 import ru.ffanjex.weatherforecast.dto.ClothingItemImageDto;
 import ru.ffanjex.weatherforecast.dto.GenerateImagesRequest;
 import ru.ffanjex.weatherforecast.model.Advice;
+import ru.ffanjex.weatherforecast.model.User;
 import ru.ffanjex.weatherforecast.model.WeatherResponse;
+import ru.ffanjex.weatherforecast.repository.UserRepository;
 import ru.ffanjex.weatherforecast.service.AdviceService;
 import ru.ffanjex.weatherforecast.service.ClothingImageService;
 import ru.ffanjex.weatherforecast.service.WeatherService;
@@ -24,18 +26,25 @@ public class AdviceRestController {
     private final AdviceService adviceService;
     private final WeatherService weatherService;
     private final ClothingImageService clothingImageService;
+    private final UserRepository userRepository;
 
     @GetMapping("/generate")
     public ResponseEntity<AdviceResponseDto> generate(@RequestParam String city) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
         WeatherResponse wr = weatherService.getWeather(city);
         AdviceService.WeatherContext ctx = adviceService.fromWeatherResponse(wr);
-        return ResponseEntity.ok(adviceService.generateAdvice(ctx));
+        return ResponseEntity.ok(adviceService.generateAdvice(ctx, user.getSex()));
     }
 
     @PostMapping("/generate-images")
     public ResponseEntity<ClothingImageResponseDto> generateImages(@RequestBody GenerateImagesRequest request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
         List<ClothingItemImageDto> items =
-                clothingImageService.generateClothingImages(request.getShortClothingDescription());
+                clothingImageService.generateClothingImages(request.getShortClothingDescription(), user.getSex());
         return ResponseEntity.ok(new ClothingImageResponseDto(items));
     }
 

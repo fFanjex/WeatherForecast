@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.ffanjex.weatherforecast.dto.AdviceResponseDto;
+import ru.ffanjex.weatherforecast.dto.enums.Sex;
 import ru.ffanjex.weatherforecast.model.Advice;
 import ru.ffanjex.weatherforecast.model.User;
 import ru.ffanjex.weatherforecast.model.WeatherResponse;
@@ -49,9 +50,9 @@ public class AdviceService {
             Integer visibilityMeters
     ) {}
 
-    public AdviceResponseDto generateAdvice(WeatherContext w) {
+    public AdviceResponseDto generateAdvice(WeatherContext w, Sex sex) {
         try {
-            String prompt = buildPrompt(w);
+            String prompt = buildPrompt(w, sex);
 
             JSONObject body = new JSONObject()
                     .put("model", "gpt-3.5-turbo")
@@ -124,6 +125,10 @@ public class AdviceService {
         }
     }
 
+    public AdviceResponseDto generateAdvice(WeatherContext w) {
+        return generateAdvice(w, null);
+    }
+
     public AdviceResponseDto generateAdvice(double temperature, double humidity, double windSpeed) {
         WeatherContext ctx = new WeatherContext(
                 temperature,
@@ -137,7 +142,7 @@ public class AdviceService {
                 null,
                 null
         );
-        return generateAdvice(ctx);
+        return generateAdvice(ctx, null);
     }
 
     public Advice saveAdvice(String adviceText) {
@@ -165,7 +170,7 @@ public class AdviceService {
                 .orElseGet(ArrayList::new);
     }
 
-    private String buildPrompt(WeatherContext w) {
+    private String buildPrompt(WeatherContext w, Sex sex) {
         String desc = (w.description == null || w.description.isBlank()) ? "нет данных" : w.description;
         String wid = (w.weatherId == null) ? "нет" : String.valueOf(w.weatherId);
 
@@ -174,29 +179,52 @@ public class AdviceService {
         String snow = (w.snow1h == null) ? "0" : String.format(Locale.US, "%.2f", w.snow1h);
         String vis = (w.visibilityMeters == null) ? "нет данных" : (w.visibilityMeters + " м");
 
+        String sexInstruction;
+        if (sex == null) {
+            sexInstruction = """
+                Если пол пользователя неизвестен, давай нейтральные или унисекс-рекомендации.
+                """;
+        } else if (sex == Sex.MALE) {
+            sexInstruction = """
+                Учитывай, что пользователь — мужчина.
+                Рекомендуй мужскую одежду, мужские фасоны и формулировки.
+                Не предлагай женские модели одежды, если это не унисекс.
+                """;
+        } else if (sex == Sex.FEMALE) {
+            sexInstruction = """
+                Учитывай, что пользователь — женщина.
+                Рекомендуй женскую одежду, женские фасоны и формулировки.
+                Не предлагай мужские модели одежды, если это не унисекс.
+                """;
+        } else {
+            sexInstruction = """
+                Если пол пользователя неизвестен, давай нейтральные или унисекс-рекомендации.
+                """;
+        }
+
         return String.format(Locale.US,
                 """
                 Ты опытный стилист и метеоконсультант.
-
+    
                 Верни строго один JSON-объект такого вида:
                 {
                   "adviceText": "string",
                   "shortClothingDescription": "string",
                   "imagePrompt": "string"
                 }
-
+    
                 ВАЖНО:
                 1) Снаружи ответ должен быть JSON.
                 2) Поле adviceText должно быть ОБЫЧНЫМ ЧЕЛОВЕЧЕСКИМ ТЕКСТОМ на русском языке.
                 3) adviceText не должен быть JSON, объектом, массивом или набором ключей и значений.
                 4) Внутри adviceText используй переносы строк \\n.
                 5) adviceText должен быть развёрнутым, полезным и понятным.
-
+    
                 Формат adviceText строго такой:
                 Коротко:
                 - Прогулка 15–30 мин: ...
                 - На 1–2 часа: ...
-
+    
                 Детально по пунктам:
                 Верх: ...
                 Низ: ...
@@ -204,27 +232,34 @@ public class AdviceService {
                 Аксессуары: ...
                 Чего избегать: ...
                 Почему: ...
-
+    
                 Требования к adviceText:
                 - пиши по-русски;
                 - дай подробный и практичный совет;
                 - объём примерно 900–1300 символов;
                 - учитывай ощущаемую температуру, влажность, ветер, порывы и осадки;
-                - отдельно уточняй, что лучше для короткой прогулки и что лучше для долгого пребывания на улице.
-
+                - отдельно уточняй, что лучше для короткой прогулки и что лучше для долгого пребывания на улице;
+                - рекомендации должны соответствовать полу пользователя, если он известен.
+    
                 Требования к shortClothingDescription:
                 - одна короткая строка на русском;
                 - только предметы одежды и аксессуары через запятую;
-                - без пояснений.
-
+                - без пояснений;
+                - список должен соответствовать полу пользователя, если он известен.
+    
                 Требования к imagePrompt:
                 - одна короткая строка на английском;
                 - это общий стиль образа;
-                - без погоды, температуры и объяснений.
-
+                - без погоды, температуры и объяснений;
+                - стиль должен соответствовать полу пользователя, если он известен.
+    
+                Дополнительные указания:
+                %s
+    
                 Погода:
                 Температура %.1f°C (ощущается %.1f°C), влажность %.0f%%, ветер %.1f м/с (порывы %s), осадки за 1ч: дождь %s мм, снег %s мм, видимость %s, погода: %s (код %s).
                 """,
+                sexInstruction,
                 w.temp, w.feelsLike, w.humidity, w.windSpeed, gust, rain, snow, vis, desc, wid
         );
     }
@@ -233,13 +268,10 @@ public class AdviceService {
         if (adviceText == null || adviceText.isBlank()) {
             return "";
         }
-
         String trimmed = adviceText.trim();
-
         if (!trimmed.startsWith("{")) {
             return trimmed;
         }
-
         try {
             JSONObject obj = new JSONObject(trimmed);
             StringBuilder sb = new StringBuilder();

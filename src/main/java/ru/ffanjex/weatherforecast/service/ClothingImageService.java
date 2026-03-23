@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.ffanjex.weatherforecast.dto.ClothingItemImageDto;
+import ru.ffanjex.weatherforecast.dto.enums.Sex;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,12 +33,12 @@ public class ClothingImageService {
 
     private static final String IMAGE_URL = "https://api.proxyapi.ru/openai/v1/images/generations";
 
-    public List<ClothingItemImageDto> generateClothingImages(String shortClothingDescription) {
+    public List<ClothingItemImageDto> generateClothingImages(String shortClothingDescription, Sex sex) {
         List<String> clothingItems = extractClothingItems(shortClothingDescription);
 
         List<CompletableFuture<ClothingItemImageDto>> futures = clothingItems.stream()
                 .map(item -> CompletableFuture.supplyAsync(() -> {
-                    String prompt = buildItemImagePrompt(item);
+                    String prompt = buildItemImagePrompt(item, sex);
                     String image = generateSingleImage(prompt);
                     return new ClothingItemImageDto(item, prompt, image);
                 }))
@@ -66,9 +67,11 @@ public class ClothingImageService {
         return items;
     }
 
-    public String buildItemImagePrompt(String clothingItem) {
+    public String buildItemImagePrompt(String clothingItem, Sex sex) {
+        String genderStyle = mapSexToPrompt(sex);
+
         return """
-                Create a realistic catalog photo of a single clothing item.
+                Create a realistic catalog photo of a single %s clothing item.
                 Item: %s.
                 Requirements:
                 - only this one item in the image
@@ -80,7 +83,17 @@ public class ClothingImageService {
                 - no text
                 - no watermark
                 - no collage
-                """.formatted(clothingItem);
+                """.formatted(genderStyle, clothingItem);
+    }
+
+    private String mapSexToPrompt(Sex sex) {
+        if (sex == null) {
+            return "adult";
+        }
+        return switch (sex) {
+            case MALE -> "men's";
+            case FEMALE -> "women's";
+        };
     }
 
     private String generateSingleImage(String prompt) {
