@@ -50,15 +50,15 @@ public class WeatherService {
     }
 
     public Optional<String> getSavedCityForCurrentUser() {
-        String username = getCurrentUsername();
-        return userService.findByUsername(username)
+        String email = getCurrentEmail();
+        return userService.findByEmail(email)
                 .map(User::getCity)
                 .map(City::getName);
     }
 
     public void saveCityForCurrentUser(String city) {
-        String username = getCurrentUsername();
-        Optional<User> optionalUser = userService.findByUsername(username);
+        String email = getCurrentEmail();
+        Optional<User> optionalUser = userService.findByEmail(email);
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -143,9 +143,9 @@ public class WeatherService {
         return attributes;
     }
 
-    public String getCurrentUsername() {
+    public String getCurrentEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        return username;
+        String email = authentication.getName();
+        return email;
     }
 }

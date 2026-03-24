@@ -29,9 +29,9 @@ public class MainRestController {
             return ResponseEntity.status(401).body("User not authenticated");
         }
 
-        String username = authentication.getName();
+        String email = authentication.getName();
 
-        Optional<User> optionalUser = userService.findByUsername(username);
+        Optional<User> optionalUser = userService.findByEmail(email);
         if (optionalUser.isEmpty()) {
             return ResponseEntity.status(401).body("User not authenticated");
         }

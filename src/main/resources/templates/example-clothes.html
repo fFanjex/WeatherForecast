@@ -14,7 +14,7 @@
   <div class="container header-inner">
     <button type="button" id="back-btn-top" class="chip">
       <span class="chip-ico">⬅️</span>
-      <span>Назад</span>
+      <span>На главную</span>
     </button>
 
     <div class="brand">
@@ -59,8 +59,8 @@
 
       <div class="advice-actions">
         <button type="button" id="back-btn-bottom" class="btn ghost">
-          <span class="btn-ico">⬅️</span>
-          <span>Вернуться к совету</span>
+          <span class="btn-ico">🏠</span>
+          <span>Вернуться на главную</span>
         </button>
       </div>
     </section>
@@ -345,11 +345,11 @@
     reloadBtn.addEventListener('click', loadImages);
 
     backBtnTop.addEventListener('click', () => {
-      window.history.back();
+      window.location.href = '/home';
     });
 
     backBtnBottom.addEventListener('click', () => {
-      window.history.back();
+      window.location.href = '/home';
     });
 
     await loadImages();

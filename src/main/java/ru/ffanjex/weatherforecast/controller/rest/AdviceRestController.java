@@ -30,8 +30,8 @@ public class AdviceRestController {
 
     @GetMapping("/generate")
     public ResponseEntity<AdviceResponseDto> generate(@RequestParam String city) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
         WeatherResponse wr = weatherService.getWeather(city);
         AdviceService.WeatherContext ctx = adviceService.fromWeatherResponse(wr);
@@ -40,8 +40,8 @@ public class AdviceRestController {
 
     @PostMapping("/generate-images")
     public ResponseEntity<ClothingImageResponseDto> generateImages(@RequestBody GenerateImagesRequest request) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
         List<ClothingItemImageDto> items =
                 clothingImageService.generateClothingImages(request.getShortClothingDescription(), user.getSex());
@@ -50,9 +50,9 @@ public class AdviceRestController {
 
     @PostMapping("/save")
     public ResponseEntity<String> save(@RequestParam String adviceText) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Advice advice = adviceService.saveAdvice(adviceText);
-        boolean success = adviceService.attachAdviceToUser(username, advice);
+        boolean success = adviceService.attachAdviceToUser(email, advice);
         return success
                 ? ResponseEntity.ok("Совет сохранён")
                 : ResponseEntity.badRequest().body("Ошибка при сохранении");

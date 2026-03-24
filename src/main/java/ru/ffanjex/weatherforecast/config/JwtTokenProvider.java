@@ -38,9 +38,9 @@ public class JwtTokenProvider {
 
     public String generateAccessToken(User user) {
         return JWT.create()
-                .withSubject(user.getUsername())
+                .withSubject(user.getEmail())
                 .withClaim("userId", user.getId())
-                .withClaim("email", user.getEmail())
+                .withClaim("username", user.getUsername())
                 .withClaim("role", "ROLE_USER")
                 .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenValidity))
                 .sign(algorithm);
@@ -48,7 +48,7 @@ public class JwtTokenProvider {
 
     public String generateRefreshToken(User user) {
         return JWT.create()
-                .withSubject(user.getUsername())
+                .withSubject(user.getEmail())
                 .withClaim("userId", user.getId())
                 .withExpiresAt(new Date(System.currentTimeMillis() + refreshTokenValidity))
                 .sign(algorithm);
@@ -56,10 +56,10 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token) {
         DecodedJWT decoded = JWT.require(algorithm).build().verify(token);
-        String username = decoded.getSubject();
+        String email = decoded.getSubject();
 
         return new UsernamePasswordAuthenticationToken(
-                username,
+                email,
                 null,
                 List.of(new SimpleGrantedAuthority("ROLE_USER"))
         );
@@ -74,7 +74,7 @@ public class JwtTokenProvider {
         }
     }
 
-    public String resolveUsername(String token) {
+    public String resolveEmail(String token) {
         DecodedJWT decoded = JWT.require(algorithm).build().verify(token);
         return decoded.getSubject();
     }

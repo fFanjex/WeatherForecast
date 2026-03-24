@@ -151,8 +151,8 @@ public class AdviceService {
         return adviceRepository.save(advice);
     }
 
-    public boolean attachAdviceToUser(String username, Advice advice) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
+    public boolean attachAdviceToUser(String email, Advice advice) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isEmpty()) {
             return false;
         }
@@ -163,8 +163,8 @@ public class AdviceService {
         return true;
     }
 
-    public ArrayList<Advice> getUserAdvices(String username) {
-        return userRepository.findByUsername(username)
+    public ArrayList<Advice> getUserAdvices(String email) {
+        return userRepository.findByEmail(email)
                 .map(User::getAdviceList)
                 .map(ArrayList::new)
                 .orElseGet(ArrayList::new);

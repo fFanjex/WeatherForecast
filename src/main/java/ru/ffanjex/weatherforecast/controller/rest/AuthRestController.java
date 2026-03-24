@@ -43,12 +43,12 @@ public class AuthRestController {
     public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
+                        request.getEmail(),
                         request.getPassword()
                 )
         );
-        String username = authentication.getName();
-        User user = userService.findByUsername(username)
+        String email = authentication.getName();
+        User user = userService.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         String accessToken = jwtTokenProvider.generateAccessToken(user);
         String refreshToken = jwtTokenProvider.generateRefreshToken(user);

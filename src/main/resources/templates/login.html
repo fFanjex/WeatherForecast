@@ -29,18 +29,24 @@
 
         <form id="login-form" novalidate>
             <div class="field">
-                <label for="username">Имя пользователя</label>
+                <label for="email">Email</label>
                 <div class="control">
                     <span class="icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none">
-                            <path d="M20 21a8 8 0 0 0-16 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M4 6h16v12H4V6Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </span>
-                    <input type="text" id="username" name="username" required minlength="3"
-                           placeholder="Ваш username" autocomplete="username" />
+                    <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            required
+                            placeholder="Ваш email"
+                            autocomplete="email"
+                    />
                 </div>
-                <small class="hint">Минимум 3 символа</small>
+                <small class="hint">Введите email, указанный при регистрации</small>
             </div>
 
             <div class="field">
@@ -52,8 +58,15 @@
                             <path d="M6 11h12v10H6V11Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
                         </svg>
                     </span>
-                    <input type="password" id="password" name="password" required minlength="6"
-                           placeholder="Ваш пароль" autocomplete="current-password" />
+                    <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            minlength="6"
+                            placeholder="Ваш пароль"
+                            autocomplete="current-password"
+                    />
                     <button class="ghost" type="button" id="togglePass" aria-label="Показать пароль">
                         Показать
                     </button>
@@ -102,7 +115,9 @@
     }
 
     form.addEventListener('input', (e) => {
-        if (e.target.matches('input')) validateInput(e.target);
+        if (e.target.matches('input')) {
+            validateInput(e.target);
+        }
         msg.textContent = '';
         msg.className = 'msg';
     });
@@ -114,7 +129,9 @@
         let valid = true;
 
         inputs.forEach(input => {
-            if (!validateInput(input)) valid = false;
+            if (!validateInput(input)) {
+                valid = false;
+            }
         });
 
         if (!valid) {
@@ -130,13 +147,13 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    username: document.getElementById('username').value,
+                    email: document.getElementById('email').value.trim(),
                     password: document.getElementById('password').value
                 })
             });
 
             if (!response.ok) {
-                throw new Error('Неверный логин или пароль');
+                throw new Error('Неверный email или пароль');
             }
 
             const data = await response.json();
@@ -145,10 +162,9 @@
             localStorage.setItem('refreshToken', data.refreshToken);
 
             window.location.href = '/home';
-
         } catch (err) {
             msg.className = 'msg error';
-            msg.textContent = err.message;
+            msg.textContent = err.message || 'Ошибка входа';
         }
     });
 </script>

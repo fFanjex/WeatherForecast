@@ -33,10 +33,6 @@ public class UserService {
     }
 
     public void registerUser(String username, String email, String password, Sex sex) {
-        if (userRepository.findByUsername(username).isPresent()) {
-            throw new IllegalArgumentException("Пользователь уже зарегистрирован");
-        }
-
         if (userRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("Email уже используется");
         }
