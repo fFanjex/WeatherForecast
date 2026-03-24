@@ -1,57 +1,69 @@
-version: '3.8'
-
 services:
   weather-app:
-    image: openjdk:17-jdk-slim
     build: .
-    container_name: weather-app
+    image: weatherforecast-app:latest
     ports:
-      - "8080:8080"
+      - "${SERVER_PORT}:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/weather
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=0000
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - SPRING_JPA_SHOW_SQL=true
-      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
-      - TZ=Europe/Moscow
-    volumes:
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
+      SPRING_APPLICATION_NAME: ${SPRING_APPLICATION_NAME}
+      SERVER_PORT: ${SERVER_PORT}
+      API_KEY: ${API_KEY}
+
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/weather
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
+
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL}
+      SPRING_JPA_DATABASE_PLATFORM: ${SPRING_JPA_DATABASE_PLATFORM}
+
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ACCESS_EXPIRATION: ${JWT_ACCESS_EXPIRATION}
+      JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION}
+
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_IMAGE_MODEL: ${OPENAI_IMAGE_MODEL}
+      SPRING_WEB_RESOURCES_STATIC_LOCATIONS: ${SPRING_WEB_RESOURCES_STATIC_LOCATIONS}
+
+      TZ: ${TZ}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - app-network
 
   db:
-    image: postgres:latest
-    container_name: weather-db
+    image: postgres:16
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=0000
-      - POSTGRES_DB=weather
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      TZ: ${TZ}
     ports:
       - "5435:5432"
     volumes:
+      - postgres-data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - app-network
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: pgadmin
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@domain.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      TZ: ${TZ}
     ports:
       - "5050:80"
-    volumes:
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - app-network
 
@@ -61,4 +73,3 @@ networks:
 
 volumes:
   postgres-data:
-    driver: local
