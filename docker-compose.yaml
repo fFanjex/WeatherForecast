@@ -2,31 +2,10 @@ services:
   weather-app:
     build: .
     image: weatherforecast-app:latest
-    ports:
-      - "${SERVER_PORT}:8080"
-    environment:
-      SPRING_APPLICATION_NAME: ${SPRING_APPLICATION_NAME}
-      SERVER_PORT: ${SERVER_PORT}
-      API_KEY: ${API_KEY}
-
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/weather
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
-
-      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
-      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL}
-      SPRING_JPA_DATABASE_PLATFORM: ${SPRING_JPA_DATABASE_PLATFORM}
-
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_ACCESS_EXPIRATION: ${JWT_ACCESS_EXPIRATION}
-      JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION}
-
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      OPENAI_IMAGE_MODEL: ${OPENAI_IMAGE_MODEL}
-      SPRING_WEB_RESOURCES_STATIC_LOCATIONS: ${SPRING_WEB_RESOURCES_STATIC_LOCATIONS}
-
-      TZ: ${TZ}
+    container_name: weather-app
+    restart: unless-stopped
+    env_file:
+      - .env
     depends_on:
       db:
         condition: service_healthy
@@ -35,10 +14,14 @@ services:
 
   db:
     image: postgres:16
+    container_name: weather-db
+    restart: unless-stopped
+    env_file:
+      - .env
     environment:
+      POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
       TZ: ${TZ}
     ports:
       - "5435:5432"
@@ -47,14 +30,31 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 10
     networks:
       - app-network
 
+  nginx:
+    image: nginx:stable-alpine
+    container_name: weather-nginx
+    restart: unless-stopped
+    depends_on:
+      - weather-app
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - app-network
+
   pgadmin:
     image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: unless-stopped
+    env_file:
+      - .env
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
@@ -62,8 +62,7 @@ services:
     ports:
       - "5050:80"
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     networks:
       - app-network
 
