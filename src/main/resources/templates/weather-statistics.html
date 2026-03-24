@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <form th:action="@{/logout}" method="post" class="logout-form">
+        <form id="logout-form" class="logout-form">
             <button type="submit" class="chip danger">
                 <span class="chip-ico">🚪</span>
                 <span>Выйти</span>
@@ -127,16 +127,14 @@
                     <div class="tile-cta">Открыть →</div>
                 </a>
 
-                <form th:action="@{/logout}" method="post" class="tile-form">
-                    <button type="submit" class="tile danger">
-                        <div class="tile-icon">🚪</div>
-                        <div class="tile-text">
-                            <div class="tile-title">Выход</div>
-                            <div class="tile-desc">Завершить сессию</div>
-                        </div>
-                        <div class="tile-cta">Выйти →</div>
-                    </button>
-                </form>
+                <button type="button" class="tile danger" id="logout-tile-btn">
+                    <div class="tile-icon">🚪</div>
+                    <div class="tile-text">
+                        <div class="tile-title">Выход</div>
+                        <div class="tile-desc">Завершить сессию</div>
+                    </div>
+                    <div class="tile-cta">Выйти →</div>
+                </button>
             </div>
 
             <div class="mini">
@@ -165,12 +163,42 @@
 </footer>
 
 <script>
+    async function performLogout() {
+        try {
+            await fetch('/api/auth/logout', {
+                method: 'POST',
+                credentials: 'same-origin'
+            });
+        } catch (error) {
+            console.error('Ошибка при выходе:', error);
+        } finally {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            sessionStorage.removeItem('exampleAdvice');
+            sessionStorage.removeItem('exampleShortClothingDescription');
+            sessionStorage.removeItem('exampleImagePrompt');
+            window.location.href = '/login';
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         const titleSpans = document.querySelectorAll('#animated-title span');
         titleSpans.forEach((span, idx) => {
             span.style.opacity = '0';
             span.style.transition = 'opacity 0.4s ease';
             setTimeout(() => span.style.opacity = '1', idx * 70);
+        });
+
+        const logoutForm = document.getElementById('logout-form');
+        const logoutTileBtn = document.getElementById('logout-tile-btn');
+
+        logoutForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await performLogout();
+        });
+
+        logoutTileBtn.addEventListener('click', async () => {
+            await performLogout();
         });
     });
 </script>

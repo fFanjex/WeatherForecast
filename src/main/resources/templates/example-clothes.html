@@ -28,7 +28,7 @@
       </div>
     </div>
 
-    <form action="/logout" method="post" class="logout-form">
+    <form id="logout-form" class="logout-form">
       <button type="submit" class="chip danger">
         <span class="chip-ico">🚪</span>
         <span>Выйти</span>
@@ -110,7 +110,7 @@
 
 <footer class="footer">
   <div class="container footer-inner">
-    <p>© 2025 Weather Forecast • Все права защищены</p>
+    <p>© 2026 Weather Forecast • Все права защищены</p>
     <p class="footer-muted">Made with ☁️ &amp; ☀️</p>
   </div>
 </footer>
@@ -127,6 +127,28 @@
       setTimeout(() => {
         span.style.opacity = '1';
       }, idx * 70);
+    });
+
+    const logoutForm = document.getElementById('logout-form');
+
+    logoutForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      try {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          credentials: 'same-origin'
+        });
+      } catch (error) {
+        console.error('Ошибка при выходе:', error);
+      } finally {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        sessionStorage.removeItem('exampleAdvice');
+        sessionStorage.removeItem('exampleShortClothingDescription');
+        sessionStorage.removeItem('exampleImagePrompt');
+        window.location.href = '/login';
+      }
     });
 
     document.getElementById('advice-text').textContent =
