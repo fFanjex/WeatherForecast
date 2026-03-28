@@ -72,7 +72,7 @@
                         </svg>
                     </div>
                     <div>
-                        <div class="label">Сохранённый город</div>
+                        <div class="label">Текущий город</div>
                         <div class="value skeleton" id="city-name">Загрузка…</div>
                     </div>
                 </div>
@@ -155,7 +155,7 @@
 
             <div class="tip">
                 <span class="tip-ico">✨</span>
-                <span>Совет: сохраните город — и прогноз будет всегда под рукой.</span>
+                <span>Совет: разрешите доступ к геолокации, чтобы прогноз строился по вашему текущему местоположению.</span>
             </div>
         </section>
     </div>
@@ -172,6 +172,8 @@
     const token = localStorage.getItem('accessToken');
 
     const mapStatus = document.getElementById('map-status');
+    const cityEl = document.getElementById('city-name');
+
     const defaultLon = 37.618423;
     const defaultLat = 55.751244;
 
@@ -204,100 +206,131 @@
         controls: []
     });
 
-    const setPoint = (lat, lon, zoom = 11) => {
+    const setPoint = (lat, lon, zoom = 13) => {
         const coords = ol.proj.fromLonLat([lon, lat]);
         marker.getGeometry().setCoordinates(coords);
         map.getView().animate({ center: coords, zoom, duration: 600 });
     };
 
-    async function geocodeCity(cityName) {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(cityName)}`;
-        const r = await fetch(url, {
+    async function reverseGeocode(lat, lon) {
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&zoom=10&addressdetails=1`;
+
+        const response = await fetch(url, {
             headers: {
                 "Accept": "application/json"
             }
         });
 
-        if (!r.ok) throw new Error('Nominatim search error');
+        if (!response.ok) {
+            throw new Error('Ошибка reverse geocoding');
+        }
 
-        const arr = await r.json();
-        if (!Array.isArray(arr) || arr.length === 0) return null;
+        const data = await response.json();
+        const address = data.address || {};
+
+        const city =
+            address.city ||
+            address.town ||
+            address.village ||
+            address.hamlet ||
+            address.municipality ||
+            address.county ||
+            'Неизвестный город';
 
         return {
-            lat: Number(arr[0].lat),
-            lon: Number(arr[0].lon),
-            displayName: arr[0].display_name
+            city,
+            displayName: data.display_name || city
         };
     }
 
-    fetch('/api/home', {
-        method: 'GET',
-        headers: token ? {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json'
-        } : {
-            'Content-Type': 'application/json'
-        }
-    })
-        .then(r => {
-            if (r.status === 401 || r.status === 403) {
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('refreshToken');
-                window.location.href = '/login';
-                return null;
-            }
-
-            if (!r.ok) {
-                throw new Error('Ошибка загрузки профиля');
-            }
-
-            return r.json();
-        })
-        .then(async (data) => {
-            if (!data) return;
-
-            document.getElementById('user-id').textContent = data.username || 'Неизвестно';
-
-            const cityEl = document.getElementById('city-name');
-            cityEl.classList.remove('skeleton');
-
-            const savedCity = (data.savedCity || '').trim();
-            cityEl.textContent = savedCity || 'не выбрано';
-
-            if (!savedCity) {
-                mapStatus.textContent = 'Город не выбран — показана Москва';
-                setPoint(defaultLat, defaultLon, 10);
+    function getCurrentPosition() {
+        return new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                reject(new Error('Geolocation не поддерживается браузером'));
                 return;
             }
 
-            mapStatus.textContent = 'Показываем сохранённый город…';
+            navigator.geolocation.getCurrentPosition(
+                (position) => resolve(position),
+                (error) => reject(error),
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        });
+    }
+
+    async function loadProfile() {
+        const response = await fetch('/api/home', {
+            method: 'GET',
+            headers: token ? {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            } : {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            window.location.href = '/login';
+            return null;
+        }
+
+        if (!response.ok) {
+            throw new Error('Ошибка загрузки профиля');
+        }
+
+        return await response.json();
+    }
+
+    async function initPage() {
+        try {
+            const data = await loadProfile();
+            if (!data) return;
+
+            document.getElementById('user-id').textContent = data.username || 'Неизвестно';
+            cityEl.classList.remove('skeleton');
+            cityEl.textContent = 'Определяем…';
+            mapStatus.textContent = 'Определяем местоположение по GPS…';
 
             try {
-                const geo = await geocodeCity(savedCity);
-                if (!geo || Number.isNaN(geo.lat) || Number.isNaN(geo.lon)) {
-                    mapStatus.textContent = 'Не смогли найти город — показана Москва';
-                    setPoint(defaultLat, defaultLon, 10);
-                    return;
-                }
+                const position = await getCurrentPosition();
 
-                setPoint(geo.lat, geo.lon, 11);
-                mapStatus.textContent = `Показан город: ${savedCity}`;
-            } catch (e) {
-                console.error(e);
-                mapStatus.textContent = 'Ошибка геокодинга — показана Москва';
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+
+                setPoint(lat, lon, 13);
+                mapStatus.textContent = 'Координаты получены по GPS';
+
+                try {
+                    const geo = await reverseGeocode(lat, lon);
+                    cityEl.textContent = geo.city;
+                    mapStatus.textContent = `Ваше местоположение: ${geo.city}`;
+                } catch (geoError) {
+                    console.error(geoError);
+                    cityEl.textContent = `Широта: ${lat.toFixed(4)}, Долгота: ${lon.toFixed(4)}`;
+                    mapStatus.textContent = 'GPS определён, но город не удалось распознать';
+                }
+            } catch (gpsError) {
+                console.error(gpsError);
+                cityEl.textContent = 'Геолокация недоступна';
+                mapStatus.textContent = 'Нет доступа к геолокации — показана Москва';
                 setPoint(defaultLat, defaultLon, 10);
             }
-        })
-        .catch((e) => {
+        } catch (e) {
             console.error(e);
-
-            const cityEl = document.getElementById('city-name');
             cityEl.classList.remove('skeleton');
             cityEl.textContent = 'Ошибка загрузки';
-
             mapStatus.textContent = 'Ошибка — показана Москва';
             setPoint(defaultLat, defaultLon, 10);
-        });
+        }
+    }
+
+    initPage();
 
     document.getElementById('logout').addEventListener('submit', async function (e) {
         e.preventDefault();
