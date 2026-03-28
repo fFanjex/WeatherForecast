@@ -46,16 +46,30 @@ public class SecurityConfig {
                                 "/",
                                 "/login",
                                 "/register",
+                                "/home",
+                                "/view-weather",
+                                "/weather",
+                                "/weather/forecast",
                                 "/api/auth/**",
-                                "/login.css",
-                                "/register.css",
-                                "/home.css",
+                                "/api/home",
+                                "/api/weather/current",
+                                "/api/weather/forecast",
                                 "/images/**",
                                 "/css/**",
                                 "/js/**",
                                 "/static/**",
-                                "/webjars/**"
+                                "/webjars/**",
+                                "/favicon.ico"
                         ).permitAll()
+                        .requestMatchers(
+                                "/save-city",
+                                "/weather/saved/data",
+                                "/api/weather/save-city",
+                                "/api/weather/saved",
+                                "/interesting-fact",
+                                "/clothing-advice",
+                                "/council-advice"
+                        ).authenticated()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

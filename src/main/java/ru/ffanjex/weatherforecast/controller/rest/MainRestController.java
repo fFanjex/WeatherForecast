@@ -2,6 +2,7 @@ package ru.ffanjex.weatherforecast.controller.rest;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,23 +25,29 @@ public class MainRestController {
     @GetMapping("/home")
     public ResponseEntity<?> getUserData() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(401).body("User not authenticated");
+        boolean authenticated = authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)
+                && !"anonymousUser".equals(authentication.getName());
+        Map<String, Object> response = new HashMap<>();
+        if (!authenticated) {
+            response.put("username", "Гость");
+            response.put("savedCity", "");
+            response.put("authenticated", false);
+            return ResponseEntity.ok(response);
         }
-
         String email = authentication.getName();
-
         Optional<User> optionalUser = userService.findByEmail(email);
         if (optionalUser.isEmpty()) {
-            return ResponseEntity.status(401).body("User not authenticated");
+            response.put("username", "Гость");
+            response.put("savedCity", "");
+            response.put("authenticated", false);
+            return ResponseEntity.ok(response);
         }
-
         User user = optionalUser.get();
-
-        Map<String, Object> response = new HashMap<>();
         response.put("username", user.getUsername());
         response.put("savedCity", user.getCity() != null ? user.getCity().getName() : "");
+        response.put("authenticated", true);
 
         return ResponseEntity.ok(response);
     }

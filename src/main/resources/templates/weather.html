@@ -28,12 +28,7 @@
             </div>
         </div>
 
-        <form id="logout-form" class="logout-form">
-            <button type="submit" class="chip danger">
-                <span class="chip-ico">🚪</span>
-                <span>Выйти</span>
-            </button>
-        </form>
+        <div id="auth-box"></div>
     </div>
 </header>
 
@@ -76,12 +71,12 @@
                 </div>
             </form>
 
-            <form action="/weather/saved/data" method="get" class="saved">
-                <button type="submit" class="btn ghost">
+            <div class="saved">
+                <button type="button" class="btn ghost" id="saved-city-btn">
                     <span class="btn-ico">📍</span>
                     <span>Погода в сохранённом городе</span>
                 </button>
-            </form>
+            </div>
         </section>
 
         <section class="card side">
@@ -106,7 +101,7 @@
                     <div class="tip-ico">⭐</div>
                     <div class="tip-text">
                         <div class="tip-title">Сохранённый город</div>
-                        <div class="tip-desc">Откройте погоду для города по умолчанию.</div>
+                        <div class="tip-desc">Доступен после входа в аккаунт.</div>
                     </div>
                 </div>
             </div>
@@ -129,6 +124,19 @@
     </div>
 </main>
 
+<div class="modal-backdrop" id="auth-modal">
+    <div class="modal-card">
+        <h3 class="modal-title">Нужен аккаунт</h3>
+        <p class="modal-text">
+            Эта функция доступна только после входа или регистрации.
+        </p>
+        <div class="modal-actions">
+            <button type="button" class="modal-btn secondary" id="close-modal-btn">Закрыть</button>
+            <a href="/login" class="modal-btn primary">Перейти</a>
+        </div>
+    </div>
+</div>
+
 <footer class="footer">
     <div class="container footer-inner">
         <p>© 2026 Weather Forecast • Все права защищены</p>
@@ -148,13 +156,62 @@
         const input = document.getElementById('city-input');
         const clearBtn = document.getElementById('clear-btn');
         const hint = document.getElementById('input-hint');
-        const logoutForm = document.getElementById('logout-form');
+        const authBox = document.getElementById('auth-box');
+        const savedCityBtn = document.getElementById('saved-city-btn');
+        const authModal = document.getElementById('auth-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+
+        const token = localStorage.getItem('accessToken');
 
         const sync = () => {
             const has = input.value.trim().length > 0;
             clearBtn.style.display = has ? 'grid' : 'none';
             hint.style.display = has ? 'block' : 'none';
         };
+
+        const openAuthModal = () => authModal.classList.add('show');
+        const closeAuthModal = () => authModal.classList.remove('show');
+
+        if (token) {
+            authBox.innerHTML = `
+                <form id="logout-form" class="logout-form">
+                    <button type="submit" class="chip danger">
+                        <span class="chip-ico">🚪</span>
+                        <span>Выйти</span>
+                    </button>
+                </form>
+            `;
+
+            document.getElementById('logout-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                try {
+                    await fetch('/api/auth/logout', {
+                        method: 'POST',
+                        credentials: 'same-origin'
+                    });
+                } catch (error) {
+                    console.error('Ошибка при выходе:', error);
+                } finally {
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
+                    window.location.href = '/login';
+                }
+            });
+
+            savedCityBtn.addEventListener('click', () => {
+                window.location.href = '/weather/saved/data';
+            });
+        } else {
+            authBox.innerHTML = `
+                <a href="/login" class="chip">
+                    <span class="chip-ico">🔐</span>
+                    <span>Войти</span>
+                </a>
+            `;
+
+            savedCityBtn.addEventListener('click', openAuthModal);
+        }
 
         input.addEventListener('input', sync);
         clearBtn.addEventListener('click', () => {
@@ -163,20 +220,10 @@
             input.focus();
         });
 
-        logoutForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            try {
-                await fetch('/api/auth/logout', {
-                    method: 'POST',
-                    credentials: 'same-origin'
-                });
-            } catch (error) {
-                console.error('Ошибка при выходе:', error);
-            } finally {
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('refreshToken');
-                window.location.href = '/login';
+        closeModalBtn.addEventListener('click', closeAuthModal);
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                closeAuthModal();
             }
         });
 

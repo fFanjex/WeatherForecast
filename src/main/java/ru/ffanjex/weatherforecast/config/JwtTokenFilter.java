@@ -24,27 +24,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String path = request.getRequestURI();
-
-        if (path.equals("/")
-                || path.equals("/login")
-                || path.equals("/register")
-                || path.startsWith("/api/auth/")
-                || path.startsWith("/images/")
-                || path.startsWith("/css/")
-                || path.startsWith("/js/")
-                || path.startsWith("/webjars/")
-                || path.endsWith(".css")
-                || path.endsWith(".js")
-                || path.endsWith(".png")
-                || path.endsWith(".jpg")
-                || path.endsWith(".jpeg")
-                || path.endsWith(".svg")
-                || path.endsWith(".webp")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         String token = resolveToken(request);
 
         if (token != null && jwtTokenProvider.isValidToken(token)) {

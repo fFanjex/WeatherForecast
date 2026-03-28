@@ -316,6 +316,27 @@ input::placeholder {
     font-weight: 700;
 }
 
+.secondary-btn {
+    margin-top: 12px;
+    width: 100%;
+    min-height: 52px;
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.08);
+    color: #fff;
+    border-radius: 16px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    transition: transform .16s ease, background .16s ease;
+}
+
+.secondary-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(255,255,255,.12);
+}
+
 @media (max-width: 420px) {
     .card { padding: 20px; }
     .ghost { padding: 7px 9px; font-size: 0.9rem; }
