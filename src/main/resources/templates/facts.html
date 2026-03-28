@@ -28,12 +28,7 @@
             </div>
         </div>
 
-        <form id="logout-form" class="logout-form">
-            <button type="submit" class="chip danger">
-                <span class="chip-ico">🚪</span>
-                <span>Выйти</span>
-            </button>
-        </form>
+        <div id="auth-box"></div>
     </div>
 </header>
 
@@ -94,14 +89,14 @@
                     <div class="tile-cta">Открыть →</div>
                 </a>
 
-                <a href="/clothing-advice" class="tile">
+                <button type="button" class="tile" id="clothing-link-btn">
                     <div class="tile-icon">🧥</div>
                     <div class="tile-text">
                         <div class="tile-title">Одежда</div>
                         <div class="tile-desc">Советы по погоде</div>
                     </div>
                     <div class="tile-cta">Открыть →</div>
-                </a>
+                </button>
 
                 <button type="button" class="tile danger" id="logout-tile-btn">
                     <div class="tile-icon">🚪</div>
@@ -131,6 +126,19 @@
     </div>
 </main>
 
+<div class="auth-modal-backdrop" id="auth-modal">
+    <div class="auth-modal-card">
+        <h3 class="auth-modal-title">Нужен аккаунт</h3>
+        <p class="auth-modal-text">
+            Эта функция доступна только после входа в аккаунт или регистрации.
+        </p>
+        <div class="auth-modal-actions">
+            <button type="button" class="auth-modal-btn secondary" id="auth-modal-close">Закрыть</button>
+            <a href="/login" class="auth-modal-btn primary">Перейти</a>
+        </div>
+    </div>
+</div>
+
 <footer class="footer">
     <div class="container footer-inner">
         <p>© 2026 Weather Forecast • Все права защищены</p>
@@ -158,23 +166,69 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem('accessToken');
+
         const titleSpans = document.querySelectorAll('#animated-title span');
+        const authBox = document.getElementById('auth-box');
+        const logoutTileBtn = document.getElementById('logout-tile-btn');
+        const clothingLinkBtn = document.getElementById('clothing-link-btn');
+
+        const authModal = document.getElementById('auth-modal');
+        const closeModalBtn = document.getElementById('auth-modal-close');
+
+        const openAuthModal = () => authModal.classList.add('show');
+        const closeAuthModal = () => authModal.classList.remove('show');
+
         titleSpans.forEach((span, idx) => {
             span.style.opacity = '0';
             span.style.transition = 'opacity 0.4s ease';
             setTimeout(() => span.style.opacity = '1', idx * 70);
         });
 
-        const logoutForm = document.getElementById('logout-form');
-        const logoutTileBtn = document.getElementById('logout-tile-btn');
+        if (token) {
+            authBox.innerHTML = `
+                <form id="logout-form" class="logout-form">
+                    <button type="submit" class="chip danger">
+                        <span class="chip-ico">🚪</span>
+                        <span>Выйти</span>
+                    </button>
+                </form>
+            `;
 
-        logoutForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await performLogout();
-        });
+            const logoutForm = document.getElementById('logout-form');
 
-        logoutTileBtn.addEventListener('click', async () => {
-            await performLogout();
+            logoutForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await performLogout();
+            });
+
+            logoutTileBtn.addEventListener('click', async () => {
+                await performLogout();
+            });
+
+            clothingLinkBtn.addEventListener('click', () => {
+                window.location.href = '/clothing-advice';
+            });
+        } else {
+            authBox.innerHTML = `
+                <a href="/login" class="chip">
+                    <span class="chip-ico">🔐</span>
+                    <span>Войти</span>
+                </a>
+            `;
+
+            logoutTileBtn.addEventListener('click', () => {
+                window.location.href = '/login';
+            });
+
+            clothingLinkBtn.addEventListener('click', openAuthModal);
+        }
+
+        closeModalBtn.addEventListener('click', closeAuthModal);
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                closeAuthModal();
+            }
         });
 
         const factItems = document.querySelectorAll(".fact");

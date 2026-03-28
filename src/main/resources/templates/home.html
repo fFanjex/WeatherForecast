@@ -23,19 +23,7 @@
             </div>
         </div>
 
-        <form id="logout" novalidate>
-            <button class="logout-btn" type="submit" aria-label="Выйти">
-                <span class="logout-ico" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M10 7V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2v-1"
-                              stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M14 12H3m0 0 3-3M3 12l3 3"
-                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </span>
-                <span>Выход</span>
-            </button>
-        </form>
+        <div id="auth-box"></div>
     </div>
 </header>
 
@@ -126,31 +114,27 @@
                     </button>
                 </form>
 
-                <form action="/interesting-fact" method="get">
-                    <button class="action-tile fact" type="submit">
-                        <div class="tile-head">
-                            <div class="tile-icon">💡</div>
-                            <div class="tile-text">
-                                <div class="tile-title">Интересный факт</div>
-                                <div class="tile-desc">Коротко и познавательно</div>
-                            </div>
+                <button class="action-tile fact require-auth-button" type="button" id="fact-btn">
+                    <div class="tile-head">
+                        <div class="tile-icon">💡</div>
+                        <div class="tile-text">
+                            <div class="tile-title">Интересный факт</div>
+                            <div class="tile-desc">Коротко и познавательно</div>
                         </div>
-                        <div class="tile-cta">Открыть →</div>
-                    </button>
-                </form>
+                    </div>
+                    <div class="tile-cta">Открыть →</div>
+                </button>
 
-                <form action="/clothing-advice" method="get">
-                    <button class="action-tile clothes" type="submit">
-                        <div class="tile-head">
-                            <div class="tile-icon">🧥</div>
-                            <div class="tile-text">
-                                <div class="tile-title">Советы по одежде</div>
-                                <div class="tile-desc">Как одеться по погоде</div>
-                            </div>
+                <button class="action-tile clothes require-auth-button" type="button" id="clothes-btn">
+                    <div class="tile-head">
+                        <div class="tile-icon">🧥</div>
+                        <div class="tile-text">
+                            <div class="tile-title">Советы по одежде</div>
+                            <div class="tile-desc">Как одеться по погоде</div>
                         </div>
-                        <div class="tile-cta">Открыть →</div>
-                    </button>
-                </form>
+                    </div>
+                    <div class="tile-cta">Открыть →</div>
+                </button>
             </div>
 
             <div class="tip">
@@ -160,6 +144,23 @@
         </section>
     </div>
 </main>
+
+<div class="auth-modal-backdrop" id="auth-modal">
+    <div class="auth-modal-card">
+        <h3 class="auth-modal-title">Нужен аккаунт</h3>
+        <p class="auth-modal-text">
+            Эта функция доступна только после входа в аккаунт или регистрации.
+        </p>
+        <div class="auth-modal-actions">
+            <button type="button" class="auth-modal-btn secondary" id="auth-modal-close">
+                Закрыть
+            </button>
+            <a href="/login" class="auth-modal-btn primary">
+                Перейти
+            </a>
+        </div>
+    </div>
+</div>
 
 <footer class="footer">
     <div class="container footer-inner">
@@ -173,6 +174,8 @@
 
     const mapStatus = document.getElementById('map-status');
     const cityEl = document.getElementById('city-name');
+    const userIdEl = document.getElementById('user-id');
+    const authBox = document.getElementById('auth-box');
 
     const defaultLon = 37.618423;
     const defaultLat = 55.751244;
@@ -211,6 +214,45 @@
         marker.getGeometry().setCoordinates(coords);
         map.getView().animate({ center: coords, zoom, duration: 600 });
     };
+
+    function setupAuthModal() {
+        const authModal = document.getElementById('auth-modal');
+        const closeBtn = document.getElementById('auth-modal-close');
+        const factBtn = document.getElementById('fact-btn');
+        const clothesBtn = document.getElementById('clothes-btn');
+
+        const openAuthModal = () => authModal.classList.add('show');
+        const closeAuthModal = () => authModal.classList.remove('show');
+
+        closeBtn?.addEventListener('click', closeAuthModal);
+
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                closeAuthModal();
+            }
+        });
+        if (!token) {
+            factBtn?.addEventListener('click', (e) => {
+                e.preventDefault();
+                openAuthModal();
+            });
+
+            clothesBtn?.addEventListener('click', (e) => {
+                e.preventDefault();
+                openAuthModal();
+            });
+        } else {
+            factBtn?.addEventListener('click', () => {
+                window.location.href = '/interesting-fact';
+            });
+
+            clothesBtn?.addEventListener('click', () => {
+                window.location.href = '/clothing-advice';
+            });
+        }
+
+        return { openAuthModal };
+    }
 
     async function reverseGeocode(lat, lon) {
         const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&zoom=10&addressdetails=1`;
@@ -273,13 +315,6 @@
             }
         });
 
-        if (response.status === 401 || response.status === 403) {
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-            window.location.href = '/login';
-            return null;
-        }
-
         if (!response.ok) {
             throw new Error('Ошибка загрузки профиля');
         }
@@ -287,16 +322,57 @@
         return await response.json();
     }
 
+    function renderAuthBox() {
+        if (token) {
+            authBox.innerHTML = `
+                <form id="logout" novalidate>
+                    <button class="logout-btn" type="submit" aria-label="Выйти">
+                        <span class="logout-ico" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M10 7V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2v-1"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M14 12H3m0 0 3-3M3 12l3 3"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        <span>Выход</span>
+                    </button>
+                </form>
+            `;
+
+            document.getElementById('logout').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                try {
+                    await fetch('/api/auth/logout', {
+                        method: 'POST'
+                    });
+                } catch (e) {
+                    console.error(e);
+                }
+
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                window.location.href = '/login';
+            });
+        } else {
+            authBox.innerHTML = `
+                <a href="/login" class="logout-btn" style="text-decoration:none;">
+                    <span class="logout-ico" aria-hidden="true">🔐</span>
+                    <span>Войти</span>
+                </a>
+            `;
+        }
+    }
+
     async function initPage() {
         try {
             const data = await loadProfile();
-            if (!data) return;
 
-            document.getElementById('user-id').textContent = data.username || 'Неизвестно';
+            userIdEl.textContent = data.username || 'Гость';
             cityEl.classList.remove('skeleton');
             cityEl.textContent = 'Определяем…';
             mapStatus.textContent = 'Определяем местоположение по GPS…';
-
             try {
                 const position = await getCurrentPosition();
 
@@ -323,6 +399,7 @@
             }
         } catch (e) {
             console.error(e);
+            userIdEl.textContent = token ? 'Ошибка' : 'Гость';
             cityEl.classList.remove('skeleton');
             cityEl.textContent = 'Ошибка загрузки';
             mapStatus.textContent = 'Ошибка — показана Москва';
@@ -330,23 +407,9 @@
         }
     }
 
+    renderAuthBox();
+    setupAuthModal();
     initPage();
-
-    document.getElementById('logout').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        try {
-            await fetch('/api/auth/logout', {
-                method: 'POST'
-            });
-        } catch (e) {
-            console.error(e);
-        }
-
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        window.location.href = '/login';
-    });
 </script>
 </body>
 </html>

@@ -68,7 +68,9 @@ public class SecurityConfig {
                                 "/api/weather/saved",
                                 "/interesting-fact",
                                 "/clothing-advice",
-                                "/council-advice"
+                                "/council-advice",
+                                "/example-clothes",
+                                "/api/advice/**"
                         ).authenticated()
                         .anyRequest().authenticated()
                 )

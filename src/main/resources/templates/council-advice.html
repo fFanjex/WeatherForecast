@@ -29,12 +29,7 @@
             </div>
         </div>
 
-        <form id="logout-form" class="logout-form">
-            <button type="submit" class="chip danger">
-                <span class="chip-ico">🚪</span>
-                <span>Выйти</span>
-            </button>
-        </form>
+        <div id="auth-box"></div>
     </div>
 </header>
 
@@ -126,6 +121,19 @@
     </div>
 </main>
 
+<div class="auth-modal-backdrop" id="auth-modal">
+    <div class="auth-modal-card">
+        <h3 class="auth-modal-title">Нужен аккаунт</h3>
+        <p class="auth-modal-text">
+            Эта функция доступна только после входа в аккаунт или регистрации.
+        </p>
+        <div class="auth-modal-actions">
+            <button type="button" class="auth-modal-btn secondary" id="auth-modal-close">Закрыть</button>
+            <a href="/login" class="auth-modal-btn primary">Перейти</a>
+        </div>
+    </div>
+</div>
+
 <footer class="footer">
     <div class="container footer-inner">
         <p>© 2026 Weather Forecast • Все права защищены</p>
@@ -140,15 +148,6 @@
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const titleSpans = document.querySelectorAll('#animated-title span');
-        titleSpans.forEach((span, idx) => {
-            span.style.opacity = '0';
-            span.style.transition = 'opacity 0.4s ease';
-            setTimeout(() => span.style.opacity = '1', idx * 70);
-        });
-    });
-
     const toast = document.getElementById('toast');
     const toastTitle = document.getElementById('toast-title');
     const toastText = document.getElementById('toast-text');
@@ -183,23 +182,72 @@
     }
 
     $(document).ready(function() {
-        $("#logout-form").on("submit", async function(e) {
-            e.preventDefault();
-            await performLogout();
+        const token = localStorage.getItem('accessToken');
+        const authBox = document.getElementById('auth-box');
+
+        const authModal = document.getElementById('auth-modal');
+        const closeModalBtn = document.getElementById('auth-modal-close');
+
+        const openAuthModal = () => authModal.classList.add('show');
+        const closeAuthModal = () => authModal.classList.remove('show');
+
+        const titleSpans = document.querySelectorAll('#animated-title span');
+        titleSpans.forEach((span, idx) => {
+            span.style.opacity = '0';
+            span.style.transition = 'opacity 0.4s ease';
+            setTimeout(() => span.style.opacity = '1', idx * 70);
         });
 
-        $("#logout-tile-btn").on("click", async function() {
-            await performLogout();
+        closeModalBtn.addEventListener('click', closeAuthModal);
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                closeAuthModal();
+            }
         });
+
+        if (token) {
+            authBox.innerHTML = `
+                <form id="logout-form" class="logout-form">
+                    <button type="submit" class="chip danger">
+                        <span class="chip-ico">🚪</span>
+                        <span>Выйти</span>
+                    </button>
+                </form>
+            `;
+
+            $("#logout-form").on("submit", async function(e) {
+                e.preventDefault();
+                await performLogout();
+            });
+
+            $("#logout-tile-btn").on("click", async function() {
+                await performLogout();
+            });
+        } else {
+            authBox.innerHTML = `
+                <a href="/login" class="chip">
+                    <span class="chip-ico">🔐</span>
+                    <span>Войти</span>
+                </a>
+            `;
+
+            $("#logout-tile-btn").on("click", function() {
+                window.location.href = '/login';
+            });
+        }
 
         $("#save-advice-btn").click(function() {
+            if (!token) {
+                openAuthModal();
+                return;
+            }
+
             const adviceText = $(".advice-text").text();
-            const token = localStorage.getItem('accessToken');
 
             $.ajax({
                 url: "/api/advice/save",
                 type: "POST",
-                headers: token ? { "Authorization": "Bearer " + token } : {},
+                headers: { "Authorization": "Bearer " + token },
                 data: { adviceText: adviceText },
                 success: function(response) {
                     showToast("Сохранено ✅", String(response || "Совет добавлен"));
@@ -211,6 +259,11 @@
         });
 
         $("#show-example-btn").click(function() {
+            if (!token) {
+                openAuthModal();
+                return;
+            }
+
             sessionStorage.setItem('exampleAdvice', adviceTextValue);
             sessionStorage.setItem('exampleShortClothingDescription', shortClothingDescriptionValue);
             sessionStorage.setItem('exampleImagePrompt', imagePromptValue);

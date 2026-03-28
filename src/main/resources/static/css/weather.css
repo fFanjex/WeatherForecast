@@ -466,7 +466,7 @@ input::placeholder{color:rgba(14,20,32,.45)}
 .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.55);
+    background: rgba(0, 0, 0, 0.58);
     display: none;
     align-items: center;
     justify-content: center;
@@ -480,7 +480,7 @@ input::placeholder{color:rgba(14,20,32,.45)}
 
 .modal-card {
     width: min(460px, 100%);
-    background: rgba(255,255,255,.95);
+    background: rgba(255,255,255,.96);
     color: #0E1420;
     border-radius: 22px;
     padding: 24px;
@@ -519,7 +519,7 @@ input::placeholder{color:rgba(14,20,32,.45)}
 }
 
 .modal-btn.primary {
-    background: linear-gradient(135deg,#4F7CFF,#67E8F9);
+    background: linear-gradient(135deg, #4F7CFF, #67E8F9);
     color: #fff;
 }
 
