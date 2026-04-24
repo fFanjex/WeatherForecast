@@ -539,6 +539,39 @@ body{
     color: #0E1420;
 }
 
+.btn.places {
+    background: linear-gradient(135deg, #22c55e, #14b8a6);
+    color: #fff;
+    box-shadow: 0 12px 30px rgba(20, 184, 166, 0.28);
+}
+
+.btn.places:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 38px rgba(20, 184, 166, 0.38);
+}
+
+.places-form {
+    width: 100%;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.action-form {
+    flex: 1;
+}
+
+.places-form {
+    flex-basis: 100%;
+}
+
+.places-form .btn {
+    width: 100%;
+}
+
 @media(max-width:980px){
     .grid{grid-template-columns:1fr}
     .brand{justify-content:flex-start}

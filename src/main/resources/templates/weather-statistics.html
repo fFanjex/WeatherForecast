@@ -92,6 +92,20 @@
                         <span>Сохранить город</span>
                     </button>
                 </form>
+
+                <form action="/places-advice" method="get" class="action-form places-form" id="places-form">
+                    <input type="hidden" name="city" th:value="${city}">
+                    <input type="hidden" name="country" th:value="${country}">
+                    <input type="hidden" name="temperature" th:value="${temperature}">
+                    <input type="hidden" name="humidity" th:value="${humidity}">
+                    <input type="hidden" name="windSpeed" th:value="${windSpeed}">
+                    <input type="hidden" name="weatherDescription" th:value="${weatherDescription}">
+
+                    <button type="submit" class="btn places">
+                        <span class="btn-ico">🗺️</span>
+                        <span>Куда сходить погулять</span>
+                    </button>
+                </form>
             </div>
 
             <div th:if="${error}" class="alert">

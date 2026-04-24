@@ -30,28 +30,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const adviceForm = document.getElementById('advice-form');
     const saveCityForm = document.getElementById('save-city-form');
+    const placesForm = document.getElementById('places-form');
 
     const authModal = document.getElementById('auth-modal');
     const closeModalBtn = document.getElementById('auth-modal-close');
 
-    const openAuthModal = () => authModal.classList.add('show');
-    const closeAuthModal = () => authModal.classList.remove('show');
+    const openAuthModal = () => {
+        authModal.classList.add('show');
+    };
+
+    const closeAuthModal = () => {
+        authModal.classList.remove('show');
+    };
 
     titleSpans.forEach((span, idx) => {
         span.style.opacity = '0';
         span.style.transition = 'opacity 0.4s ease';
-        setTimeout(() => span.style.opacity = '1', idx * 70);
+        setTimeout(() => {
+            span.style.opacity = '1';
+        }, idx * 70);
     });
 
     if (token) {
         authBox.innerHTML = `
-                <form id="logout-form" class="logout-form">
-                    <button type="submit" class="chip danger">
-                        <span class="chip-ico">🚪</span>
-                        <span>Выйти</span>
-                    </button>
-                </form>
-            `;
+            <form id="logout-form" class="logout-form">
+                <button type="submit" class="chip danger">
+                    <span class="chip-ico">🚪</span>
+                    <span>Выйти</span>
+                </button>
+            </form>
+        `;
 
         const logoutForm = document.getElementById('logout-form');
 
@@ -65,11 +73,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     } else {
         authBox.innerHTML = `
-                <a href="/login" class="chip">
-                    <span class="chip-ico">🔐</span>
-                    <span>Войти</span>
-                </a>
-            `;
+            <a href="/login" class="chip">
+                <span class="chip-ico">🔐</span>
+                <span>Войти</span>
+            </a>
+        `;
 
         adviceForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -81,12 +89,18 @@ document.addEventListener('DOMContentLoaded', () => {
             openAuthModal();
         });
 
+        placesForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            openAuthModal();
+        });
+
         logoutTileBtn.addEventListener('click', () => {
             window.location.href = '/login';
         });
     }
 
     closeModalBtn.addEventListener('click', closeAuthModal);
+
     authModal.addEventListener('click', (e) => {
         if (e.target === authModal) {
             closeAuthModal();
