@@ -55,7 +55,7 @@ public class AdviceService {
             String prompt = buildPrompt(w, sex);
 
             JSONObject body = new JSONObject()
-                    .put("model", "gpt-3.5-turbo")
+                    .put("model", "gpt-4o-mini")
                     .put("messages", new JSONArray()
                             .put(new JSONObject()
                                     .put("role", "system")

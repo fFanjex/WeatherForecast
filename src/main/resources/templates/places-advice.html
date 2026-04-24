@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WeatherForecast • Куда сходить</title>
+  <link rel="stylesheet" href="/css/places-advice.css">
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="noise"></div>
+
+<header class="header">
+  <div class="container header-inner">
+
+    <a href="/view-weather" class="chip">
+      <span class="chip-ico">⬅️</span>
+      <span>Назад</span>
+    </a>
+
+    <div class="brand">
+      <div class="logo">WF</div>
+      <div class="brand-text">
+        <div class="brand-title" id="animated-title">
+          <span>W</span><span>e</span><span>a</span><span>t</span><span>h</span><span>e</span><span>r</span>
+          <span>F</span><span>o</span><span>r</span><span>e</span><span>c</span><span>a</span><span>s</span><span>t</span>
+        </div>
+        <div class="brand-subtitle">Лучшие места для прогулки</div>
+      </div>
+    </div>
+
+    <div id="auth-box"></div>
+
+  </div>
+</header>
+
+<main class="main">
+  <div class="container">
+
+    <section class="hero card">
+      <div class="badge">🗺️ Рекомендации</div>
+
+      <h1 class="hero-title">
+        Куда сходить в
+        <span id="city-text">городе</span>
+      </h1>
+
+      <p class="hero-text">
+        Подбираем места с учётом текущей погоды:
+        <strong id="weather-text">загрузка...</strong>,
+        <strong><span id="temp-text">--</span>°C</strong>
+      </p>
+    </section>
+
+    <section class="places-grid" id="places-grid">
+      <div class="placeholder">
+        <div class="placeholder-icon">⏳</div>
+        <div class="placeholder-title">Загрузка</div>
+        <div class="placeholder-text">Ищем лучшие места...</div>
+      </div>
+    </section>
+
+    <div class="places-status" id="places-status"></div>
+
+  </div>
+</main>
+
+<div class="auth-modal-backdrop" id="auth-modal">
+  <div class="auth-modal-card">
+    <h3 class="auth-modal-title">Нужен аккаунт</h3>
+    <p class="auth-modal-text">
+      Эта функция доступна только после входа.
+    </p>
+    <div class="auth-modal-actions">
+      <button id="auth-modal-close" class="auth-modal-btn secondary">Закрыть</button>
+      <a href="/login" class="auth-modal-btn primary">Войти</a>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <p>© 2026 Weather Forecast</p>
+    <p class="footer-muted">Made with ☁️ & ☀️</p>
+  </div>
+</footer>
+
+<script src="/js/places-advice.js"></script>
+</body>
+</html>
