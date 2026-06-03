@@ -73,11 +73,19 @@ body {
     padding: 20px 0;
 }
 
-.header-inner, .footer-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+.header-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+}
+
+.footer-inner{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    text-align:center;
 }
 
 .footer-inner p {
