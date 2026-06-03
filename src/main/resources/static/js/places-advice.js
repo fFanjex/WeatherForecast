@@ -19,6 +19,75 @@ async function performLogout() {
     }
 }
 
+function declineCityInPrepositional(city) {
+    if (!city || typeof city !== 'string') return city;
+
+    const lowerCity = city.toLowerCase().trim();
+
+    // Несклоняемые города (иностранного происхождения)
+    const indeclinable = ['сочи', 'баку', 'перу', 'токио', 'осло', 'чико', 'мали', 'дели', 'сент-луис'];
+    if (indeclinable.includes(lowerCity)) {
+        return city;
+    }
+
+    // Составные названия (Нижний Новгород, Санкт-Петербург и т.д.)
+    const words = city.split(/[\s-]+/);
+    if (words.length > 1) {
+        return words.map(word => declineCityInPrepositional(word)).join(' ');
+    }
+
+    const lastChar = city[city.length - 1].toLowerCase();
+    const lastTwoChars = city.slice(-2).toLowerCase();
+    const lastThreeChars = city.slice(-3).toLowerCase();
+
+    // Женский род на -а, -я
+    if (lastChar === 'а') {
+        const prevChar = city[city.length - 2]?.toLowerCase();
+        // После гласных (кроме й) обычно -е
+        if (['г', 'к', 'х'].includes(prevChar)) {
+            return city.slice(0, -1) + 'е'; // Москва → Москве
+        }
+        if (['ш', 'ж', 'ч', 'щ'].includes(prevChar)) {
+            return city.slice(0, -1) + 'е'; // Рига → Риге (но это не шипящие)
+        }
+        return city.slice(0, -1) + 'е'; // по умолчанию
+    }
+
+    if (lastChar === 'я') {
+        return city.slice(0, -1) + 'е'; // Россия → России (но это -ия)
+    }
+
+    // На -ия
+    if (lastTwoChars === 'ия') {
+        return city.slice(0, -2) + 'ии'; // Россия → России
+    }
+
+    // Мужской род на согласную
+    if (['б', 'в', 'г', 'д', 'ж', 'з', 'й', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш', 'щ'].includes(lastChar)) {
+        // На -ий
+        if (lastTwoChars === 'ий') {
+            return city.slice(0, -2) + 'ии'; // Крым → Крыме (нет, это не то)
+        }
+        // На -ынь, -ск и т.д.
+        return city + 'е'; // Париж → Париже, Лондон → Лондоне
+    }
+
+    // На -ь (мужской или женский род)
+    if (lastChar === 'ь') {
+        // Казань → Казани (женский род)
+        // Тверь → Твери (женский род)
+        // Обычно женский род на -ь → -и
+        return city.slice(0, -1) + 'и';
+    }
+
+    // На -о, -е, -э, -у, -ю, -и обычно не склоняются
+    if (['о', 'е', 'э', 'у', 'ю', 'и'].includes(lastChar)) {
+        return city;
+    }
+
+    return city;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('accessToken');
 
@@ -214,7 +283,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            cityText.textContent = weather.city || 'городе';
+            // Склоняем город в предложном падеже
+            const declinedCity = declineCityInPrepositional(weather.city);
+
+            cityText.textContent = declinedCity || 'городе';
             weatherText.textContent = weather.weatherDescription || 'погода не указана';
             tempText.textContent = weather.temperature || '--';
 
